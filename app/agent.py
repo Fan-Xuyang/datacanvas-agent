@@ -3,6 +3,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 from shared.model import structured
 from .data import execute
+from .planning import offline_plan
 
 
 class ChartSpec(BaseModel):
@@ -22,46 +23,7 @@ class AnalysisPlan(BaseModel):
 
 
 def demo_plan(query, schema):
-    numeric = [x["name"] for x in schema if x["type"] == "DOUBLE"]
-    categories = [x["name"] for x in schema if x["type"] == "VARCHAR"]
-    if not numeric:
-        field = schema[0]["name"]
-        return AnalysisPlan(
-            title="记录数统计",
-            metric_definition="按首个字段分组统计记录数；不代表业务去重计数。",
-            sql=f'SELECT "{field}" AS category, COUNT(*) AS value FROM data GROUP BY "{field}" ORDER BY value DESC LIMIT 20',
-            chart=ChartSpec(x="category", y="value", title="分组记录数"),
-        )
-    metric = "sales" if "sales" in numeric else numeric[0]
-    category = (
-        "month"
-        if any(w in query for w in ["趋势", "按月", "trend"]) and "month" in categories
-        else (
-            "region"
-            if "region" in categories
-            else (categories[0] if categories else None)
-        )
-    )
-    aggregate = "AVG" if any(w in query for w in ["平均", "avg"]) else "SUM"
-    if category:
-        sql = (
-            f'SELECT "{category}" AS category, {aggregate}("{metric}") AS value FROM data GROUP BY "{category}" ORDER BY '
-            + ("category" if category == "month" else "value DESC")
-            + " LIMIT 20"
-        )
-    else:
-        sql = f"SELECT '全部记录' AS category, {aggregate}(\"{metric}\") AS value FROM data"
-    return AnalysisPlan(
-        title="数据汇总分析",
-        metric_definition=f"{metric} 使用 {aggregate} 聚合，空值遵循 SQL 默认规则；未自动推断金额币种或业务去重口径。",
-        sql=sql,
-        chart=ChartSpec(
-            kind="line" if category == "month" else "bar",
-            x="category",
-            y="value",
-            title=f"{metric} 汇总",
-        ),
-    )
+    return AnalysisPlan.model_validate(offline_plan(query, schema))
 
 
 def valid_chart(spec, result):

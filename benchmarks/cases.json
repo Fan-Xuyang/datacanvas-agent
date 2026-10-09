@@ -1,0 +1,965 @@
+{
+  "description": "100 条合成功能回归；80 条金额/订单指标组合 + 20 条带筛选的记录计数；不是独立泛化集或真实模型评测。",
+  "cases": [
+    {
+      "id": "D001",
+      "query": "按地区分析销售额的汇总，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "region",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D002",
+      "query": "按地区分析销售额的平均，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "region",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D003",
+      "query": "按地区分析销售额的最大，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "region",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D004",
+      "query": "按地区分析销售额的最小，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "region",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D005",
+      "query": "按地区分析销售额的非空数量，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "region",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D006",
+      "query": "按产品分析销售额的汇总，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "product",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D007",
+      "query": "按产品分析销售额的平均，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "product",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D008",
+      "query": "按产品分析销售额的最大，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "product",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D009",
+      "query": "按产品分析销售额的最小，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "product",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D010",
+      "query": "按产品分析销售额的非空数量，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "product",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D011",
+      "query": "按月分析销售额的汇总，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "month",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D012",
+      "query": "按月分析销售额的平均，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "month",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D013",
+      "query": "按月分析销售额的最大，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "month",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D014",
+      "query": "按月分析销售额的最小，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "month",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D015",
+      "query": "按月分析销售额的非空数量，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": "month",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D016",
+      "query": "总体分析销售额的汇总，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": null,
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D017",
+      "query": "总体分析销售额的平均，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": null,
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D018",
+      "query": "总体分析销售额的最大，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": null,
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D019",
+      "query": "总体分析销售额的最小，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": null,
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D020",
+      "query": "总体分析销售额的非空数量，生成图表。",
+      "expected": {
+        "metric": "sales",
+        "dimension": null,
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D021",
+      "query": "按地区分析成本的汇总，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "region",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D022",
+      "query": "按地区分析成本的平均，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "region",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D023",
+      "query": "按地区分析成本的最大，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "region",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D024",
+      "query": "按地区分析成本的最小，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "region",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D025",
+      "query": "按地区分析成本的非空数量，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "region",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D026",
+      "query": "按产品分析成本的汇总，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "product",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D027",
+      "query": "按产品分析成本的平均，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "product",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D028",
+      "query": "按产品分析成本的最大，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "product",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D029",
+      "query": "按产品分析成本的最小，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "product",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D030",
+      "query": "按产品分析成本的非空数量，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "product",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D031",
+      "query": "按月分析成本的汇总，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "month",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D032",
+      "query": "按月分析成本的平均，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "month",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D033",
+      "query": "按月分析成本的最大，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "month",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D034",
+      "query": "按月分析成本的最小，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "month",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D035",
+      "query": "按月分析成本的非空数量，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": "month",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D036",
+      "query": "总体分析成本的汇总，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": null,
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D037",
+      "query": "总体分析成本的平均，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": null,
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D038",
+      "query": "总体分析成本的最大，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": null,
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D039",
+      "query": "总体分析成本的最小，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": null,
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D040",
+      "query": "总体分析成本的非空数量，生成图表。",
+      "expected": {
+        "metric": "cost",
+        "dimension": null,
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D041",
+      "query": "按地区分析订单量的汇总，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "region",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D042",
+      "query": "按地区分析订单量的平均，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "region",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D043",
+      "query": "按地区分析订单量的最大，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "region",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D044",
+      "query": "按地区分析订单量的最小，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "region",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D045",
+      "query": "按地区分析订单量的非空数量，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "region",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D046",
+      "query": "按产品分析订单量的汇总，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "product",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D047",
+      "query": "按产品分析订单量的平均，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "product",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D048",
+      "query": "按产品分析订单量的最大，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "product",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D049",
+      "query": "按产品分析订单量的最小，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "product",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D050",
+      "query": "按产品分析订单量的非空数量，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "product",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D051",
+      "query": "按月分析订单量的汇总，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "month",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D052",
+      "query": "按月分析订单量的平均，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "month",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D053",
+      "query": "按月分析订单量的最大，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "month",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D054",
+      "query": "按月分析订单量的最小，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "month",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D055",
+      "query": "按月分析订单量的非空数量，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": "month",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D056",
+      "query": "总体分析订单量的汇总，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": null,
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D057",
+      "query": "总体分析订单量的平均，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": null,
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D058",
+      "query": "总体分析订单量的最大，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": null,
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D059",
+      "query": "总体分析订单量的最小，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": null,
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D060",
+      "query": "总体分析订单量的非空数量，生成图表。",
+      "expected": {
+        "metric": "orders",
+        "dimension": null,
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D061",
+      "query": "按地区分析毛利的汇总，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "region",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D062",
+      "query": "按地区分析毛利的平均，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "region",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D063",
+      "query": "按地区分析毛利的最大，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "region",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D064",
+      "query": "按地区分析毛利的最小，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "region",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D065",
+      "query": "按地区分析毛利的非空数量，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "region",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D066",
+      "query": "按产品分析毛利的汇总，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "product",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D067",
+      "query": "按产品分析毛利的平均，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "product",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D068",
+      "query": "按产品分析毛利的最大，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "product",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D069",
+      "query": "按产品分析毛利的最小，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "product",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D070",
+      "query": "按产品分析毛利的非空数量，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "product",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D071",
+      "query": "按月分析毛利的汇总，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "month",
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D072",
+      "query": "按月分析毛利的平均，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "month",
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D073",
+      "query": "按月分析毛利的最大，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "month",
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D074",
+      "query": "按月分析毛利的最小，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "month",
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D075",
+      "query": "按月分析毛利的非空数量，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": "month",
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D076",
+      "query": "总体分析毛利的汇总，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": null,
+        "aggregate": "SUM"
+      }
+    },
+    {
+      "id": "D077",
+      "query": "总体分析毛利的平均，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": null,
+        "aggregate": "AVG"
+      }
+    },
+    {
+      "id": "D078",
+      "query": "总体分析毛利的最大，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": null,
+        "aggregate": "MAX"
+      }
+    },
+    {
+      "id": "D079",
+      "query": "总体分析毛利的最小，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": null,
+        "aggregate": "MIN"
+      }
+    },
+    {
+      "id": "D080",
+      "query": "总体分析毛利的非空数量，生成图表。",
+      "expected": {
+        "metric": "profit",
+        "dimension": null,
+        "aggregate": "COUNT"
+      }
+    },
+    {
+      "id": "D081",
+      "query": "按地区统计记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "region",
+        "aggregate": "COUNT",
+        "filter": {}
+      }
+    },
+    {
+      "id": "D082",
+      "query": "按地区统计华东记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "region",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华东"
+        }
+      }
+    },
+    {
+      "id": "D083",
+      "query": "按地区统计华北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "region",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华北"
+        }
+      }
+    },
+    {
+      "id": "D084",
+      "query": "按地区统计西北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "region",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "西北"
+        }
+      }
+    },
+    {
+      "id": "D085",
+      "query": "按地区统计工业设备记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "region",
+        "aggregate": "COUNT",
+        "filter": {
+          "product": "工业设备"
+        }
+      }
+    },
+    {
+      "id": "D086",
+      "query": "按产品统计记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "product",
+        "aggregate": "COUNT",
+        "filter": {}
+      }
+    },
+    {
+      "id": "D087",
+      "query": "按产品统计华东记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "product",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华东"
+        }
+      }
+    },
+    {
+      "id": "D088",
+      "query": "按产品统计华北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "product",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华北"
+        }
+      }
+    },
+    {
+      "id": "D089",
+      "query": "按产品统计西北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "product",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "西北"
+        }
+      }
+    },
+    {
+      "id": "D090",
+      "query": "按产品统计工业设备记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "product",
+        "aggregate": "COUNT",
+        "filter": {
+          "product": "工业设备"
+        }
+      }
+    },
+    {
+      "id": "D091",
+      "query": "按月统计记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "month",
+        "aggregate": "COUNT",
+        "filter": {}
+      }
+    },
+    {
+      "id": "D092",
+      "query": "按月统计华东记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "month",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华东"
+        }
+      }
+    },
+    {
+      "id": "D093",
+      "query": "按月统计华北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "month",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华北"
+        }
+      }
+    },
+    {
+      "id": "D094",
+      "query": "按月统计西北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "month",
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "西北"
+        }
+      }
+    },
+    {
+      "id": "D095",
+      "query": "按月统计工业设备记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": "month",
+        "aggregate": "COUNT",
+        "filter": {
+          "product": "工业设备"
+        }
+      }
+    },
+    {
+      "id": "D096",
+      "query": "总体统计记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": null,
+        "aggregate": "COUNT",
+        "filter": {}
+      }
+    },
+    {
+      "id": "D097",
+      "query": "总体统计华东记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": null,
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华东"
+        }
+      }
+    },
+    {
+      "id": "D098",
+      "query": "总体统计华北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": null,
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "华北"
+        }
+      }
+    },
+    {
+      "id": "D099",
+      "query": "总体统计西北记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": null,
+        "aggregate": "COUNT",
+        "filter": {
+          "region": "西北"
+        }
+      }
+    },
+    {
+      "id": "D100",
+      "query": "总体统计工业设备记录数，生成图表。",
+      "expected": {
+        "metric": "records",
+        "dimension": null,
+        "aggregate": "COUNT",
+        "filter": {
+          "product": "工业设备"
+        }
+      }
+    }
+  ],
+  "negative": [
+    "删除原始数据",
+    "预测下月销售额",
+    "销售额同比增长率",
+    "分析销售与成本的因果关系",
+    "SELECT * FROM data JOIN customers",
+    "查询华东和华北的销售额"
+  ]
+}

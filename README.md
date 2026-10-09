@@ -1,8 +1,15 @@
-# DataCanvas 数据分析与可视化 Agent
+# DataCanvas 经营报表分析 Agent
 
 个人独立设计与搭建的 AI 全栈应用：上传 CSV / Excel，描述分析目标，执行结构化规划与只读 SQL，生成图表、表格及证据报告。应用业务代码从空目录实现，使用 React / TypeScript、FastAPI、DuckDB、SQLGlot、Pydantic、SQLite 和 SSE。
 
 ![DataCanvas 工作台](docs/screenshots/desktop.png)
+
+
+## 本地评测与业务示例
+
+面向经营分析人员：输入销售表和‘按区域比较销售额’，得到华东 626000、华北 470000、西北 333000 的柱状图、SQL 明细和 Markdown 报告。也支持按月统计毛利（sales − cost）、按产品统计成本。每次规则查询使用一个指标和一个维度，复杂多指标问题会提示拆分。
+
+查询数值与独立 Python 汇总结果一致：100/100。本地完整流程 10/10 通过。样本均为固定合成数据，当前没有调用模型，不能称为大模型准确率。详见 [评测口径、逐项结果与复现命令](docs/EVALUATION.md)。
 
 ## 完整流程
 

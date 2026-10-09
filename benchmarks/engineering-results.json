@@ -1,0 +1,236 @@
+{
+  "scope": "本地合成门户/数据集的真实 HTTP 工具流程；无模型。重启计时包含服务启动，人工确认由测试发出，不代表真人等待时间。",
+  "model": "none",
+  "python": "3.12.14",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "completed": 10,
+  "total": 10,
+  "checks_passed": 40,
+  "checks_total": 40,
+  "p50_ms": 1056.04,
+  "p95_ms": 1250.77,
+  "cases": [
+    {
+      "id": "D001",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 4934.42
+    },
+    {
+      "id": "D011",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1049.32
+    },
+    {
+      "id": "D021",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1037.42
+    },
+    {
+      "id": "D031",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 921.0
+    },
+    {
+      "id": "D041",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1048.06
+    },
+    {
+      "id": "D051",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1062.76
+    },
+    {
+      "id": "D061",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1132.38
+    },
+    {
+      "id": "D071",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1033.69
+    },
+    {
+      "id": "D081",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1250.77
+    },
+    {
+      "id": "D091",
+      "route": "duckdb",
+      "completed": true,
+      "elapsed_ms": 1083.21
+    }
+  ],
+  "checks": [
+    {
+      "name": "numeric_result_D001",
+      "passed": true
+    },
+    {
+      "name": "completed_D001",
+      "passed": true
+    },
+    {
+      "name": "report_export_D001",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D001",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D011",
+      "passed": true
+    },
+    {
+      "name": "completed_D011",
+      "passed": true
+    },
+    {
+      "name": "report_export_D011",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D011",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D021",
+      "passed": true
+    },
+    {
+      "name": "completed_D021",
+      "passed": true
+    },
+    {
+      "name": "report_export_D021",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D021",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D031",
+      "passed": true
+    },
+    {
+      "name": "completed_D031",
+      "passed": true
+    },
+    {
+      "name": "report_export_D031",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D031",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D041",
+      "passed": true
+    },
+    {
+      "name": "completed_D041",
+      "passed": true
+    },
+    {
+      "name": "report_export_D041",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D041",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D051",
+      "passed": true
+    },
+    {
+      "name": "completed_D051",
+      "passed": true
+    },
+    {
+      "name": "report_export_D051",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D051",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D061",
+      "passed": true
+    },
+    {
+      "name": "completed_D061",
+      "passed": true
+    },
+    {
+      "name": "report_export_D061",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D061",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D071",
+      "passed": true
+    },
+    {
+      "name": "completed_D071",
+      "passed": true
+    },
+    {
+      "name": "report_export_D071",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D071",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D081",
+      "passed": true
+    },
+    {
+      "name": "completed_D081",
+      "passed": true
+    },
+    {
+      "name": "report_export_D081",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D081",
+      "passed": true
+    },
+    {
+      "name": "numeric_result_D091",
+      "passed": true
+    },
+    {
+      "name": "completed_D091",
+      "passed": true
+    },
+    {
+      "name": "report_export_D091",
+      "passed": true
+    },
+    {
+      "name": "sse_cursor_D091",
+      "passed": true
+    }
+  ]
+}
