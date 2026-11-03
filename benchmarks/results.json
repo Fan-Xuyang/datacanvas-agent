@@ -7,713 +7,713 @@
   "model": "none",
   "results": {
     "v1": {
-      "correct": 4,
+      "correct": 2,
       "total": 100,
-      "result_consistency_percent": 4.0,
+      "result_consistency_percent": 2.0,
       "negative_rejected": 0,
       "negative_total": 6,
-      "p50_ms": 487.23,
-      "p95_ms": 520.61,
+      "p50_ms": 498.3,
+      "p95_ms": 543.08,
       "cases": [
         {
           "id": "D001",
           "query": "按地区分析销售额的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 549.43
+          "latency_ms": 562.84
         },
         {
           "id": "D002",
           "query": "按地区分析销售额的平均，生成图表。",
-          "correct": true,
+          "correct": false,
           "error": null,
-          "latency_ms": 470.95
+          "latency_ms": 490.58
         },
         {
           "id": "D003",
           "query": "按地区分析销售额的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 502.62
+          "latency_ms": 491.14
         },
         {
           "id": "D004",
           "query": "按地区分析销售额的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 457.62
+          "latency_ms": 513.79
         },
         {
           "id": "D005",
           "query": "按地区分析销售额的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 506.64
+          "latency_ms": 486.48
         },
         {
           "id": "D006",
           "query": "按产品分析销售额的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 505.49
+          "latency_ms": 499.08
         },
         {
           "id": "D007",
           "query": "按产品分析销售额的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 482.82
+          "latency_ms": 499.56
         },
         {
           "id": "D008",
           "query": "按产品分析销售额的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 496.12
+          "latency_ms": 496.61
         },
         {
           "id": "D009",
           "query": "按产品分析销售额的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 519.71
+          "latency_ms": 490.74
         },
         {
           "id": "D010",
           "query": "按产品分析销售额的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 491.84
+          "latency_ms": 490.33
         },
         {
           "id": "D011",
           "query": "按月分析销售额的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 459.47
+          "latency_ms": 510.35
         },
         {
           "id": "D012",
           "query": "按月分析销售额的平均，生成图表。",
-          "correct": true,
+          "correct": false,
           "error": null,
-          "latency_ms": 473.54
+          "latency_ms": 514.05
         },
         {
           "id": "D013",
           "query": "按月分析销售额的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 464.84
+          "latency_ms": 491.18
         },
         {
           "id": "D014",
           "query": "按月分析销售额的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 475.24
+          "latency_ms": 504.83
         },
         {
           "id": "D015",
           "query": "按月分析销售额的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 471.7
+          "latency_ms": 485.76
         },
         {
           "id": "D016",
           "query": "总体分析销售额的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 503.94
+          "latency_ms": 486.56
         },
         {
           "id": "D017",
           "query": "总体分析销售额的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 504.75
+          "latency_ms": 487.54
         },
         {
           "id": "D018",
           "query": "总体分析销售额的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 490.42
+          "latency_ms": 501.79
         },
         {
           "id": "D019",
           "query": "总体分析销售额的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 480.95
+          "latency_ms": 479.05
         },
         {
           "id": "D020",
           "query": "总体分析销售额的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 489.52
+          "latency_ms": 497.36
         },
         {
           "id": "D021",
           "query": "按地区分析成本的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 486.97
+          "latency_ms": 483.39
         },
         {
           "id": "D022",
           "query": "按地区分析成本的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 474.87
+          "latency_ms": 492.84
         },
         {
           "id": "D023",
           "query": "按地区分析成本的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 465.63
+          "latency_ms": 491.43
         },
         {
           "id": "D024",
           "query": "按地区分析成本的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 466.77
+          "latency_ms": 506.73
         },
         {
           "id": "D025",
           "query": "按地区分析成本的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 489.7
+          "latency_ms": 512.56
         },
         {
           "id": "D026",
           "query": "按产品分析成本的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 527.05
+          "latency_ms": 497.99
         },
         {
           "id": "D027",
           "query": "按产品分析成本的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 488.48
+          "latency_ms": 482.46
         },
         {
           "id": "D028",
           "query": "按产品分析成本的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 485.05
+          "latency_ms": 501.66
         },
         {
           "id": "D029",
           "query": "按产品分析成本的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 479.25
+          "latency_ms": 489.88
         },
         {
           "id": "D030",
           "query": "按产品分析成本的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 458.27
+          "latency_ms": 488.05
         },
         {
           "id": "D031",
           "query": "按月分析成本的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 467.9
+          "latency_ms": 481.62
         },
         {
           "id": "D032",
           "query": "按月分析成本的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 455.93
+          "latency_ms": 482.3
         },
         {
           "id": "D033",
           "query": "按月分析成本的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 467.44
+          "latency_ms": 498.28
         },
         {
           "id": "D034",
           "query": "按月分析成本的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 494.24
+          "latency_ms": 494.76
         },
         {
           "id": "D035",
           "query": "按月分析成本的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 456.06
+          "latency_ms": 495.0
         },
         {
           "id": "D036",
           "query": "总体分析成本的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 472.81
+          "latency_ms": 494.43
         },
         {
           "id": "D037",
           "query": "总体分析成本的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 508.48
+          "latency_ms": 500.56
         },
         {
           "id": "D038",
           "query": "总体分析成本的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 487.62
+          "latency_ms": 485.55
         },
         {
           "id": "D039",
           "query": "总体分析成本的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 485.5
+          "latency_ms": 492.49
         },
         {
           "id": "D040",
           "query": "总体分析成本的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 484.36
+          "latency_ms": 505.13
         },
         {
           "id": "D041",
           "query": "按地区分析订单量的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 482.99
+          "latency_ms": 528.94
         },
         {
           "id": "D042",
           "query": "按地区分析订单量的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 520.84
+          "latency_ms": 487.73
         },
         {
           "id": "D043",
           "query": "按地区分析订单量的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 486.94
+          "latency_ms": 486.91
         },
         {
           "id": "D044",
           "query": "按地区分析订单量的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 519.21
+          "latency_ms": 505.64
         },
         {
           "id": "D045",
           "query": "按地区分析订单量的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 494.82
+          "latency_ms": 521.33
         },
         {
           "id": "D046",
           "query": "按产品分析订单量的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 509.46
+          "latency_ms": 511.92
         },
         {
           "id": "D047",
           "query": "按产品分析订单量的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 524.11
+          "latency_ms": 502.03
         },
         {
           "id": "D048",
           "query": "按产品分析订单量的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 478.21
+          "latency_ms": 484.27
         },
         {
           "id": "D049",
           "query": "按产品分析订单量的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 507.76
+          "latency_ms": 489.99
         },
         {
           "id": "D050",
           "query": "按产品分析订单量的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 473.0
+          "latency_ms": 504.46
         },
         {
           "id": "D051",
           "query": "按月分析订单量的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 494.66
+          "latency_ms": 499.1
         },
         {
           "id": "D052",
           "query": "按月分析订单量的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 482.57
+          "latency_ms": 489.05
         },
         {
           "id": "D053",
           "query": "按月分析订单量的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 508.15
+          "latency_ms": 497.12
         },
         {
           "id": "D054",
           "query": "按月分析订单量的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 489.29
+          "latency_ms": 511.41
         },
         {
           "id": "D055",
           "query": "按月分析订单量的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 511.47
+          "latency_ms": 498.67
         },
         {
           "id": "D056",
           "query": "总体分析订单量的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 499.48
+          "latency_ms": 512.71
         },
         {
           "id": "D057",
           "query": "总体分析订单量的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 491.59
+          "latency_ms": 513.52
         },
         {
           "id": "D058",
           "query": "总体分析订单量的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 475.0
+          "latency_ms": 561.25
         },
         {
           "id": "D059",
           "query": "总体分析订单量的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 507.42
+          "latency_ms": 506.48
         },
         {
           "id": "D060",
           "query": "总体分析订单量的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 504.04
+          "latency_ms": 496.67
         },
         {
           "id": "D061",
           "query": "按地区分析毛利的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 481.0
+          "latency_ms": 490.83
         },
         {
           "id": "D062",
           "query": "按地区分析毛利的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 494.61
+          "latency_ms": 499.74
         },
         {
           "id": "D063",
           "query": "按地区分析毛利的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 478.59
+          "latency_ms": 491.73
         },
         {
           "id": "D064",
           "query": "按地区分析毛利的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 519.29
+          "latency_ms": 492.15
         },
         {
           "id": "D065",
           "query": "按地区分析毛利的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 486.74
+          "latency_ms": 523.78
         },
         {
           "id": "D066",
           "query": "按产品分析毛利的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 486.43
+          "latency_ms": 485.22
         },
         {
           "id": "D067",
           "query": "按产品分析毛利的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 477.15
+          "latency_ms": 491.1
         },
         {
           "id": "D068",
           "query": "按产品分析毛利的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 466.14
+          "latency_ms": 498.26
         },
         {
           "id": "D069",
           "query": "按产品分析毛利的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 456.98
+          "latency_ms": 502.27
         },
         {
           "id": "D070",
           "query": "按产品分析毛利的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 486.2
+          "latency_ms": 500.81
         },
         {
           "id": "D071",
           "query": "按月分析毛利的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 490.21
+          "latency_ms": 525.74
         },
         {
           "id": "D072",
           "query": "按月分析毛利的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 513.44
+          "latency_ms": 519.89
         },
         {
           "id": "D073",
           "query": "按月分析毛利的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 491.47
+          "latency_ms": 520.88
         },
         {
           "id": "D074",
           "query": "按月分析毛利的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 482.13
+          "latency_ms": 503.73
         },
         {
           "id": "D075",
           "query": "按月分析毛利的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 472.73
+          "latency_ms": 484.05
         },
         {
           "id": "D076",
           "query": "总体分析毛利的汇总，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 496.98
+          "latency_ms": 479.92
         },
         {
           "id": "D077",
           "query": "总体分析毛利的平均，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 502.79
+          "latency_ms": 488.08
         },
         {
           "id": "D078",
           "query": "总体分析毛利的最大，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 471.05
+          "latency_ms": 474.46
         },
         {
           "id": "D079",
           "query": "总体分析毛利的最小，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 519.8
+          "latency_ms": 471.78
         },
         {
           "id": "D080",
           "query": "总体分析毛利的非空数量，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 533.64
+          "latency_ms": 490.47
         },
         {
           "id": "D081",
           "query": "按地区统计记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 520.61
+          "latency_ms": 479.25
         },
         {
           "id": "D082",
           "query": "按地区统计华东记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 473.91
+          "latency_ms": 494.41
         },
         {
           "id": "D083",
           "query": "按地区统计华北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 482.12
+          "latency_ms": 494.3
         },
         {
           "id": "D084",
           "query": "按地区统计西北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 474.23
+          "latency_ms": 476.87
         },
         {
           "id": "D085",
           "query": "按地区统计工业设备记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 471.64
+          "latency_ms": 526.35
         },
         {
           "id": "D086",
           "query": "按产品统计记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 483.36
+          "latency_ms": 559.54
         },
         {
           "id": "D087",
           "query": "按产品统计华东记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 491.06
+          "latency_ms": 515.24
         },
         {
           "id": "D088",
           "query": "按产品统计华北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 504.24
+          "latency_ms": 504.38
         },
         {
           "id": "D089",
           "query": "按产品统计西北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 497.89
+          "latency_ms": 500.1
         },
         {
           "id": "D090",
           "query": "按产品统计工业设备记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 476.02
+          "latency_ms": 521.36
         },
         {
           "id": "D091",
           "query": "按月统计记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 479.81
+          "latency_ms": 498.32
         },
         {
           "id": "D092",
           "query": "按月统计华东记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 510.11
+          "latency_ms": 542.15
         },
         {
           "id": "D093",
           "query": "按月统计华北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 484.67
+          "latency_ms": 510.4
         },
         {
           "id": "D094",
           "query": "按月统计西北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 510.19
+          "latency_ms": 530.32
         },
         {
           "id": "D095",
           "query": "按月统计工业设备记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 502.21
+          "latency_ms": 561.86
         },
         {
           "id": "D096",
           "query": "总体统计记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 487.48
+          "latency_ms": 516.49
         },
         {
           "id": "D097",
           "query": "总体统计华东记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 504.96
+          "latency_ms": 574.25
         },
         {
           "id": "D098",
           "query": "总体统计华北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 496.74
+          "latency_ms": 508.73
         },
         {
           "id": "D099",
           "query": "总体统计西北记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 443.7
+          "latency_ms": 510.42
         },
         {
           "id": "D100",
           "query": "总体统计工业设备记录数，生成图表。",
           "correct": false,
           "error": null,
-          "latency_ms": 464.21
+          "latency_ms": 543.08
         }
       ]
     },
@@ -723,708 +723,708 @@
       "result_consistency_percent": 100.0,
       "negative_rejected": 6,
       "negative_total": 6,
-      "p50_ms": 503.42,
-      "p95_ms": 555.92,
+      "p50_ms": 561.98,
+      "p95_ms": 602.99,
       "cases": [
         {
           "id": "D001",
           "query": "按地区分析销售额的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 498.13
+          "latency_ms": 519.95
         },
         {
           "id": "D002",
           "query": "按地区分析销售额的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 515.33
+          "latency_ms": 502.41
         },
         {
           "id": "D003",
           "query": "按地区分析销售额的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 501.11
+          "latency_ms": 487.96
         },
         {
           "id": "D004",
           "query": "按地区分析销售额的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 513.07
+          "latency_ms": 576.04
         },
         {
           "id": "D005",
           "query": "按地区分析销售额的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 499.41
+          "latency_ms": 548.24
         },
         {
           "id": "D006",
           "query": "按产品分析销售额的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 506.49
+          "latency_ms": 499.7
         },
         {
           "id": "D007",
           "query": "按产品分析销售额的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 510.63
+          "latency_ms": 510.42
         },
         {
           "id": "D008",
           "query": "按产品分析销售额的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 478.66
+          "latency_ms": 495.23
         },
         {
           "id": "D009",
           "query": "按产品分析销售额的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 494.36
+          "latency_ms": 497.21
         },
         {
           "id": "D010",
           "query": "按产品分析销售额的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 519.35
+          "latency_ms": 496.82
         },
         {
           "id": "D011",
           "query": "按月分析销售额的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 514.36
+          "latency_ms": 478.44
         },
         {
           "id": "D012",
           "query": "按月分析销售额的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 519.39
+          "latency_ms": 489.49
         },
         {
           "id": "D013",
           "query": "按月分析销售额的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 485.9
+          "latency_ms": 613.73
         },
         {
           "id": "D014",
           "query": "按月分析销售额的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 516.35
+          "latency_ms": 569.65
         },
         {
           "id": "D015",
           "query": "按月分析销售额的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 493.14
+          "latency_ms": 520.88
         },
         {
           "id": "D016",
           "query": "总体分析销售额的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 477.54
+          "latency_ms": 513.39
         },
         {
           "id": "D017",
           "query": "总体分析销售额的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 523.53
+          "latency_ms": 510.21
         },
         {
           "id": "D018",
           "query": "总体分析销售额的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 516.46
+          "latency_ms": 501.53
         },
         {
           "id": "D019",
           "query": "总体分析销售额的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 503.16
+          "latency_ms": 525.89
         },
         {
           "id": "D020",
           "query": "总体分析销售额的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 485.31
+          "latency_ms": 518.27
         },
         {
           "id": "D021",
           "query": "按地区分析成本的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 486.02
+          "latency_ms": 597.98
         },
         {
           "id": "D022",
           "query": "按地区分析成本的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 472.59
+          "latency_ms": 591.68
         },
         {
           "id": "D023",
           "query": "按地区分析成本的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 503.68
+          "latency_ms": 590.31
         },
         {
           "id": "D024",
           "query": "按地区分析成本的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 489.88
+          "latency_ms": 561.8
         },
         {
           "id": "D025",
           "query": "按地区分析成本的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 499.21
+          "latency_ms": 602.99
         },
         {
           "id": "D026",
           "query": "按产品分析成本的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 482.92
+          "latency_ms": 543.36
         },
         {
           "id": "D027",
           "query": "按产品分析成本的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 512.29
+          "latency_ms": 556.92
         },
         {
           "id": "D028",
           "query": "按产品分析成本的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 471.52
+          "latency_ms": 552.47
         },
         {
           "id": "D029",
           "query": "按产品分析成本的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 476.22
+          "latency_ms": 562.58
         },
         {
           "id": "D030",
           "query": "按产品分析成本的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 490.5
+          "latency_ms": 534.53
         },
         {
           "id": "D031",
           "query": "按月分析成本的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 512.65
+          "latency_ms": 539.65
         },
         {
           "id": "D032",
           "query": "按月分析成本的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 467.71
+          "latency_ms": 567.29
         },
         {
           "id": "D033",
           "query": "按月分析成本的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 487.19
+          "latency_ms": 567.81
         },
         {
           "id": "D034",
           "query": "按月分析成本的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 493.19
+          "latency_ms": 557.2
         },
         {
           "id": "D035",
           "query": "按月分析成本的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 504.05
+          "latency_ms": 562.17
         },
         {
           "id": "D036",
           "query": "总体分析成本的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 495.17
+          "latency_ms": 553.32
         },
         {
           "id": "D037",
           "query": "总体分析成本的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 500.7
+          "latency_ms": 556.67
         },
         {
           "id": "D038",
           "query": "总体分析成本的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 499.95
+          "latency_ms": 555.32
         },
         {
           "id": "D039",
           "query": "总体分析成本的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 505.43
+          "latency_ms": 552.93
         },
         {
           "id": "D040",
           "query": "总体分析成本的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 517.13
+          "latency_ms": 614.06
         },
         {
           "id": "D041",
           "query": "按地区分析订单量的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 523.63
+          "latency_ms": 588.28
         },
         {
           "id": "D042",
           "query": "按地区分析订单量的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 498.07
+          "latency_ms": 581.15
         },
         {
           "id": "D043",
           "query": "按地区分析订单量的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 555.66
+          "latency_ms": 553.09
         },
         {
           "id": "D044",
           "query": "按地区分析订单量的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 526.96
+          "latency_ms": 584.24
         },
         {
           "id": "D045",
           "query": "按地区分析订单量的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 539.37
+          "latency_ms": 561.46
         },
         {
           "id": "D046",
           "query": "按产品分析订单量的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 516.24
+          "latency_ms": 564.87
         },
         {
           "id": "D047",
           "query": "按产品分析订单量的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 514.57
+          "latency_ms": 577.58
         },
         {
           "id": "D048",
           "query": "按产品分析订单量的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 497.89
+          "latency_ms": 550.67
         },
         {
           "id": "D049",
           "query": "按产品分析订单量的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 519.52
+          "latency_ms": 549.05
         },
         {
           "id": "D050",
           "query": "按产品分析订单量的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 552.32
+          "latency_ms": 594.77
         },
         {
           "id": "D051",
           "query": "按月分析订单量的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 599.05
+          "latency_ms": 572.63
         },
         {
           "id": "D052",
           "query": "按月分析订单量的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 506.72
+          "latency_ms": 548.15
         },
         {
           "id": "D053",
           "query": "按月分析订单量的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 518.23
+          "latency_ms": 568.76
         },
         {
           "id": "D054",
           "query": "按月分析订单量的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 486.13
+          "latency_ms": 562.45
         },
         {
           "id": "D055",
           "query": "按月分析订单量的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 509.58
+          "latency_ms": 585.43
         },
         {
           "id": "D056",
           "query": "总体分析订单量的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 541.87
+          "latency_ms": 556.13
         },
         {
           "id": "D057",
           "query": "总体分析订单量的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 561.13
+          "latency_ms": 562.37
         },
         {
           "id": "D058",
           "query": "总体分析订单量的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 535.57
+          "latency_ms": 544.81
         },
         {
           "id": "D059",
           "query": "总体分析订单量的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 517.5
+          "latency_ms": 558.55
         },
         {
           "id": "D060",
           "query": "总体分析订单量的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 552.22
+          "latency_ms": 595.2
         },
         {
           "id": "D061",
           "query": "按地区分析毛利的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 598.02
+          "latency_ms": 546.64
         },
         {
           "id": "D062",
           "query": "按地区分析毛利的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 566.86
+          "latency_ms": 563.73
         },
         {
           "id": "D063",
           "query": "按地区分析毛利的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 555.92
+          "latency_ms": 585.05
         },
         {
           "id": "D064",
           "query": "按地区分析毛利的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 499.93
+          "latency_ms": 544.45
         },
         {
           "id": "D065",
           "query": "按地区分析毛利的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 542.36
+          "latency_ms": 568.93
         },
         {
           "id": "D066",
           "query": "按产品分析毛利的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 562.51
+          "latency_ms": 572.5
         },
         {
           "id": "D067",
           "query": "按产品分析毛利的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 521.27
+          "latency_ms": 546.37
         },
         {
           "id": "D068",
           "query": "按产品分析毛利的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 529.55
+          "latency_ms": 568.7
         },
         {
           "id": "D069",
           "query": "按产品分析毛利的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 528.36
+          "latency_ms": 609.19
         },
         {
           "id": "D070",
           "query": "按产品分析毛利的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 517.25
+          "latency_ms": 601.18
         },
         {
           "id": "D071",
           "query": "按月分析毛利的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 524.1
+          "latency_ms": 543.02
         },
         {
           "id": "D072",
           "query": "按月分析毛利的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 543.16
+          "latency_ms": 565.89
         },
         {
           "id": "D073",
           "query": "按月分析毛利的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 523.01
+          "latency_ms": 558.96
         },
         {
           "id": "D074",
           "query": "按月分析毛利的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 501.41
+          "latency_ms": 582.2
         },
         {
           "id": "D075",
           "query": "按月分析毛利的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 511.58
+          "latency_ms": 507.62
         },
         {
           "id": "D076",
           "query": "总体分析毛利的汇总，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 492.76
+          "latency_ms": 499.3
         },
         {
           "id": "D077",
           "query": "总体分析毛利的平均，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 486.16
+          "latency_ms": 554.67
         },
         {
           "id": "D078",
           "query": "总体分析毛利的最大，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 492.14
+          "latency_ms": 583.9
         },
         {
           "id": "D079",
           "query": "总体分析毛利的最小，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 500.31
+          "latency_ms": 545.23
         },
         {
           "id": "D080",
           "query": "总体分析毛利的非空数量，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 486.97
+          "latency_ms": 595.14
         },
         {
           "id": "D081",
           "query": "按地区统计记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 480.97
+          "latency_ms": 525.2
         },
         {
           "id": "D082",
           "query": "按地区统计华东记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 498.67
+          "latency_ms": 508.34
         },
         {
           "id": "D083",
           "query": "按地区统计华北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 484.06
+          "latency_ms": 558.97
         },
         {
           "id": "D084",
           "query": "按地区统计西北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 470.57
+          "latency_ms": 561.51
         },
         {
           "id": "D085",
           "query": "按地区统计工业设备记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 481.05
+          "latency_ms": 563.4
         },
         {
           "id": "D086",
           "query": "按产品统计记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 503.12
+          "latency_ms": 581.24
         },
         {
           "id": "D087",
           "query": "按产品统计华东记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 497.88
+          "latency_ms": 636.57
         },
         {
           "id": "D088",
           "query": "按产品统计华北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 481.58
+          "latency_ms": 609.43
         },
         {
           "id": "D089",
           "query": "按产品统计西北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 486.19
+          "latency_ms": 587.83
         },
         {
           "id": "D090",
           "query": "按产品统计工业设备记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 472.69
+          "latency_ms": 598.38
         },
         {
           "id": "D091",
           "query": "按月统计记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 508.41
+          "latency_ms": 577.64
         },
         {
           "id": "D092",
           "query": "按月统计华东记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 517.7
+          "latency_ms": 562.79
         },
         {
           "id": "D093",
           "query": "按月统计华北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 500.31
+          "latency_ms": 563.71
         },
         {
           "id": "D094",
           "query": "按月统计西北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 510.12
+          "latency_ms": 560.9
         },
         {
           "id": "D095",
           "query": "按月统计工业设备记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 485.55
+          "latency_ms": 590.24
         },
         {
           "id": "D096",
           "query": "总体统计记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 501.85
+          "latency_ms": 589.28
         },
         {
           "id": "D097",
           "query": "总体统计华东记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 504.41
+          "latency_ms": 582.96
         },
         {
           "id": "D098",
           "query": "总体统计华北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 475.84
+          "latency_ms": 596.77
         },
         {
           "id": "D099",
           "query": "总体统计西北记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 481.87
+          "latency_ms": 566.24
         },
         {
           "id": "D100",
           "query": "总体统计工业设备记录数，生成图表。",
           "correct": true,
           "error": null,
-          "latency_ms": 471.92
+          "latency_ms": 567.81
         }
       ]
     }

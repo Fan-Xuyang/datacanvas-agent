@@ -7,68 +7,68 @@
   "total": 10,
   "checks_passed": 40,
   "checks_total": 40,
-  "p50_ms": 1056.04,
-  "p95_ms": 1250.77,
+  "p50_ms": 1178.85,
+  "p95_ms": 1209.6,
   "cases": [
     {
       "id": "D001",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 4934.42
+      "elapsed_ms": 5564.71
     },
     {
       "id": "D011",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1049.32
+      "elapsed_ms": 1205.48
     },
     {
       "id": "D021",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1037.42
+      "elapsed_ms": 1209.6
     },
     {
       "id": "D031",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 921.0
+      "elapsed_ms": 1188.59
     },
     {
       "id": "D041",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1048.06
+      "elapsed_ms": 1177.48
     },
     {
       "id": "D051",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1062.76
+      "elapsed_ms": 1180.22
     },
     {
       "id": "D061",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1132.38
+      "elapsed_ms": 1143.31
     },
     {
       "id": "D071",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1033.69
+      "elapsed_ms": 1159.47
     },
     {
       "id": "D081",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1250.77
+      "elapsed_ms": 1155.78
     },
     {
       "id": "D091",
       "route": "duckdb",
       "completed": true,
-      "elapsed_ms": 1083.21
+      "elapsed_ms": 1159.61
     }
   ],
   "checks": [

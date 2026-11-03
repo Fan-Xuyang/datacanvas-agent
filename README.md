@@ -1,6 +1,6 @@
 # DataCanvas 经营数据分析应用
 
-用于导入表格、描述分析目标、执行结构化规划与只读 SQL，并生成图表、表格和可复核报告。应用由 React / TypeScript、FastAPI、DuckDB、SQLGlot、Pydantic、SQLite 和 SSE 构成。
+DataCanvas 是企业数据分析与知识 Agent 项目：导入业务表和文档，通过自然语言分析数据或检索知识，查看图表、SQL、原文引用和可复核报告。应用使用 React / TypeScript、FastAPI、DuckDB、SQLGlot、Pydantic、SQLite FTS5 和 SSE。
 
 默认数据集是 [UCI Online Retail](https://archive.ics.uci.edu/dataset/352/online%2Bretail) 的 20,000 条真实交易子集，许可为 CC BY 4.0。来源、筛选方式、字段说明和署名见 [`examples/README.md`](examples/README.md)。该数据来自英国线上礼品零售商，时间为 2010-12 至 2011-12；它不是材料行业数据。示例销售额按数量乘单价计算，币种为英镑，不含取消单、退货和成本分析。
 
@@ -12,13 +12,22 @@
 
 固定数据仅保留在 `tests/fixtures/`，用于确定性回归测试和基准评测；`examples/` 中的默认样本全部来自开放数据集。测试结果只说明本地固定用例和接口链路，不代表模型准确率或生产运行指标。详见[评测口径与复现命令](docs/EVALUATION.md)。
 
+## 企业知识库 RAG
+
+可导入 PDF、TXT、Markdown 和 CSV 文档。系统按页提取、分块、建立全文索引，通过 BM25 检索；配置独立的 embedding 接口后以 RRF 融合词法与向量候选，再按 query-term 覆盖率轻量重排。问答会把检索片段交给生成模型，并只展示模型引用的有效来源 ID。未配置模型时仍可检索原文片段，不会伪称生成回答。数据分析 Agent 也会将相关知识片段作为受信边界明确的业务上下文。
+
+知识库 API：`POST /api/knowledge` 导入；`GET /api/knowledge` 列表；`GET /api/knowledge/search?q=...` 检索；`GET /api/knowledge/answer?q=...` 检索并回答；`DELETE /api/knowledge/{id}` 删除。单文档上限 5 MB，扫描版 PDF 需先 OCR。
+
+对人工标注的检索用例可调用 `POST /api/evaluations/rag`，输入 query 与相关 Chunk ID，返回 Recall@k、Precision@k 和 MRR；系统不会生成或伪造期望标签。
+
 ## 完整流程
 
 1. 导入 CSV / Excel，规范列名、推断数值字段，保存为独立 DuckDB 数据集。
-2. 结合字段 Schema 和用户填写的指标词典，生成经 Pydantic 校验的 SQL 和图表配置。
-3. SQLGlot 校验单条 SELECT、表范围与函数；独立进程使用只读连接，关闭外部访问和扩展自动加载，并限制内存、线程、时间及返回行数。
-4. 模型模式遇到 SQL 或图表字段错误时，将执行反馈送回规划器，最多修复两次。
-5. React 根据结构化图表配置渲染 ECharts；持久化计划、SQL、结果校验值与报告，可下载 Markdown。
+2. 导入 PDF / TXT / Markdown / CSV，执行文本切分、FTS5 检索及可选向量检索。
+3. 结合 Schema、指标词典及相关知识来源生成结构化计划；模型输出经 Pydantic 校验。
+4. SQLGlot 校验单条 SELECT、表范围与函数；独立进程使用只读连接，限制内存、线程、时间及结果行数。
+5. 模型规划失败时根据执行反馈修复，最多两次；持久化计划、事件、知识引用及证据报告。
+6. React 渲染分析图表、检索引用和执行轨迹，可下载 Markdown / CSV。
 
 图表使用受约束的结构化配置，由前端固定组件渲染，不执行模型生成的任意 JavaScript。
 
@@ -36,7 +45,11 @@ cd ..
 powershell -ExecutionPolicy Bypass -File .\start.ps1
 ```
 
-浏览器打开 <http://127.0.0.1:8201>，API 文档为 `/docs`。默认规则模式不调用模型，但数据导入、SQL 查询、图表和报告均在本地实际执行。模型模式需要将 `.env.example` 复制为 `.env` 并配置兼容接口。
+浏览器打开 <http://127.0.0.1:8201>，API 文档为 `/docs`。规则模式不调用模型；知识库可离线做全文检索。项目使用 OpenAI-compatible 接口，已提供 DeepSeek 配置示例，也可替换为兼容服务。配置 `.env` 中的 `AI_API_KEY`、`AI_BASE_URL` 和 `AI_MODEL` 可启用生成式规划及知识问答。Embedding 是独立配置项，需提供支持 embedding 的服务密钥、地址和模型；DeepSeek 对话模型不会被误当成向量模型。
+
+任务请求由结构化规划器生成，再经参数校验的只读 SQL 工具执行。`skills/` 下的 `SKILL.md` 可增加可版本控制的业务规范，运行时按关键词匹配并写入任务轨迹。MCP Server 可单独通过 `python -m app.mcp_server` 以 stdio 启动，或配置 `MCP_TRANSPORT=streamable-http` 使用 HTTP。出站 MCP 服务可通过 `MCP_SERVERS` 配置；`GET /api/mcp/servers/{name}/tools` 发现工具，`POST /api/mcp/servers/{name}/tools/{tool}` 只允许显式声明只读的工具。远程服务必须走 HTTPS，可选 bearer token 放在本地环境变量中；共享部署时，每个服务都要声明允许访问的 `tenant_ids`。
+
+本地默认单用户模式。部署共享实例时，将 `DATACANVAS_AUTH_REQUIRED=true` 并为 `DATACANVAS_TOKENS` 配置随机 bearer token 到角色和租户的映射；任务、数据集、知识文档和审计记录均按租户隔离。Token 配置只放在未跟踪的 `.env` 或密钥管理服务中。该内置认证适合内网原型和单实例；正式企业部署还应接入组织的 OIDC/SSO、TLS 入口和集中密钥管理。
 
 首次启动会将开放数据样本导入本地数据库；已有数据不会被删除。CSV / Excel 上传上限为 5 MB、20,000 行。无需联网即可运行已内置的样本。
 
@@ -46,9 +59,11 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 .venv\Scripts\python.exe -m pytest tests -q
 ```
 
-应用为本地单用户使用，没有生产鉴权。API 密钥、本地数据库和依赖目录不提交 Git。模型输出经过结构化校验，业务口径仍需结合数据来源核对。
+项目提供可选的单实例 bearer 身份校验和租户过滤，默认保持本地单用户模式。API 密钥、本地数据库和依赖目录不提交 Git。生产身份联邦、TLS、备份/HA 与分布式任务队列尚需企业环境配置。模型输出经过结构化校验，业务口径仍需结合数据来源核对。
 
 实现说明见[本地使用与工程说明](docs/USAGE.md)，项目摘要见[项目描述](docs/简历项目描述.md)。
+
+企业能力范围与建设状态见[能力清单](docs/ENTERPRISE_CAPABILITIES.md)。
 
 ## 设计参考
 

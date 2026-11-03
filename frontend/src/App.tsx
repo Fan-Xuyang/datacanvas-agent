@@ -10,6 +10,11 @@ type Dataset={id:string;name:string;rows:number;schema:{name:string;type:string}
 type Trace={seq:number;type:string;payload:Record<string,unknown>;created:number};
 type Task={id:string;query:string;mode:string;status:string;events:Trace[];state:{dataset?:Dataset;plan?:{title?:string;goal?:string;metric_definition?:string;sql?:string;chart?:{kind:string;x:string;y:string;title:string};payload?:Record<string,string|number>};result?:{columns:string[];rows:(string|number|null)[][];truncated:boolean;checksum:string};digest?:string;screenshot?:string;receipt?:{receipt:string};report?:string;usage?:{input_tokens:number|null;output_tokens:number|null;latency_ms:number}[]}};
 type TaskSummary=Pick<Task,'id'|'query'|'status'|'mode'>;
+type KnowledgeDoc={id:string;filename:string;sha256:string;bytes:number;chunks:number;created:number};
+type KnowledgeHit={id:string;document_id:string;filename:string;page:number;content:string;score:number};
+type QualityProfile={rows:number;fields:{name:string;type:string;null_count:number;distinct_count:number}[];issues:{field:string|null;type:string;count:number}[]};
+type OpsMetrics={tasks_by_status:Record<string,number>;datasets:number;knowledge_documents:number;model_calls:number;input_tokens:number;output_tokens:number;model_latency_ms:number};
+type DatasetLineage={source_name:string;source_sha256:string;ingested_at:number;row_count:number;column_count:number};
 const labels:Record<string,string>={queued:'排队中',running:'执行中',completed:'已完成',failed:'执行失败',awaiting_approval:'等待确认',interrupted:'已中断',cancelled:'已取消'};
 const prompts=['按国家汇总销售额','按月份查看销售额趋势','按商品汇总销售额','按国家统计订单数','按国家统计不同客户数','按国家查看平均单价'];
 
@@ -33,9 +38,26 @@ function downloadCsv(task:Task){
 }
 
 async function api(path:string,body?:unknown){
-  const response=await fetch('/api/'+path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:undefined);
-  if(!response.ok){let text='请求失败';try{text=(await response.json()).detail||text;}catch{}throw Error(text);}
+  const response=await authedFetch('/api/'+path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});
+  if(!response.ok){let text='请求失败';try{const data=await response.json();text=data.detail||text;}catch{try{text=(await response.text())||text;}catch{}}throw Error(text);}
   return response.json();
+}
+
+function authedFetch(url:string,init:RequestInit={}){
+  const headers=new Headers(init.headers),token=sessionStorage.getItem('datacanvas-token');if(token)headers.set('Authorization','Bearer '+token);
+  return fetch(url,{...init,headers});
+}
+
+async function watchEvents(url:string,signal:AbortSignal,onTrace:(event:Trace)=>void){
+  const headers=new Headers(),token=sessionStorage.getItem('datacanvas-token');if(token)headers.set('Authorization','Bearer '+token);
+  const response=await fetch(url,{headers,signal});if(!response.ok||!response.body)throw Error('事件流连接失败');
+  const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='';
+  while(true){const {value,done}=await reader.read();if(done)return;buffer+=decoder.decode(value,{stream:true});let boundary;
+    while((boundary=buffer.indexOf('\n\n'))>=0){const frame=buffer.slice(0,boundary);buffer=buffer.slice(boundary+2);let event='message',data='';
+      for(const line of frame.split(/\r?\n/)){if(line.startsWith('event:'))event=line.slice(6).trim();if(line.startsWith('data:'))data+=line.slice(5).trim();}
+      if(event==='trace'&&data)onTrace(JSON.parse(data) as Trace);if(event==='settled')return;
+    }
+  }
 }
 
 function Chart({task}:{task:Task}){
@@ -53,41 +75,50 @@ function Chart({task}:{task:Task}){
 }
 
 export default function App(){
-  const [kind,setKind]=useState('data'),[configured,setConfigured]=useState(false),[datasets,setDatasets]=useState<Dataset[]>([]),[dataset,setDataset]=useState('');
+  const [kind,setKind]=useState('data'),[configured,setConfigured]=useState(false),[authRequired,setAuthRequired]=useState(false),[tokenInput,setTokenInput]=useState(''),[datasets,setDatasets]=useState<Dataset[]>([]),[dataset,setDataset]=useState(''),[quality,setQuality]=useState<QualityProfile|null>(null),[lineage,setLineage]=useState<DatasetLineage|null>(null),[opsMetrics,setOpsMetrics]=useState<OpsMetrics|null>(null);
   const [tasks,setTasks]=useState<TaskSummary[]>([]),[task,setTask]=useState<Task|null>(null),[query,setQuery]=useState(''),[mode,setMode]=useState('demo');
+  const [knowledgeDocs,setKnowledgeDocs]=useState<KnowledgeDoc[]>([]),[knowledgeQuery,setKnowledgeQuery]=useState(''),[knowledgeAnswer,setKnowledgeAnswer]=useState(''),[knowledgeHits,setKnowledgeHits]=useState<KnowledgeHit[]>([]),[knowledgeBusy,setKnowledgeBusy]=useState(false),[knowledgeUploading,setKnowledgeUploading]=useState(false);
   const [metric,setMetric]=useState('销售额 = SUM(sales)，不含币种换算；按数据文件原始口径。'),[error,setError]=useState(''),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[copied,setCopied]=useState(false);
-  const stream=useRef<EventSource|null>(null),selected=useRef<string|null>(null);
+  const stream=useRef<AbortController|null>(null),selected=useRef<string|null>(null);
   const browser=kind==='browser';
-  async function refresh(){setTasks(await api('tasks'));}
+  async function refresh(){const [taskRows,stats]=await Promise.all([api('tasks'),api('metrics')]);setTasks(taskRows);setOpsMetrics(stats);}
   async function refreshData(){const data=await api('datasets');setDatasets(data);setDataset(id=>id||data.find((d:Dataset)=>d.name==='uci_online_retail_sample.csv')?.id||data[0]?.id||'');}
+  async function refreshKnowledge(){setKnowledgeDocs(await api('knowledge'));}
   async function load(id:string,connect=true){
     selected.current=id;const data:Task=await api('tasks/'+id);if(selected.current!==id)return;setTask(data);
-    stream.current?.close();
+    stream.current?.abort();
     if(connect&&['running','queued'].includes(data.status)){
       const after=data.events.at(-1)?.seq||0;
-      const es=new EventSource('/api/tasks/'+id+'/events?after='+after);stream.current=es;
-      es.addEventListener('trace',async e=>{const event:Trace=JSON.parse((e as MessageEvent).data);setTask(t=>t?.id===id?{...t,events:t.events.some(x=>x.seq===event.seq)?t.events:[...t.events,event]}:t);});
-      es.addEventListener('settled',()=>{es.close();if(selected.current===id)void load(id,false).catch(e=>setError(e.message));void refresh();});
-      es.onerror=()=>{ // EventSource reconnects with Last-Event-ID; keep the task running on the server.
-        if(es.readyState===EventSource.CLOSED)void load(id,false).catch(e=>setError(e.message));
-      };
+      const controller=new AbortController();stream.current=controller;
+      void watchEvents('/api/tasks/'+id+'/events?after='+after,controller.signal,event=>{setTask(t=>t?.id===id?{...t,events:t.events.some(x=>x.seq===event.seq)?t.events:[...t.events,event]}:t);})
+        .then(()=>{if(controller.signal.aborted)return;if(selected.current===id)void load(id,false).catch(e=>setError(e.message));void refresh();})
+        .catch(e=>{if(!controller.signal.aborted)setError((e as Error).message);});
     }
   }
-  useEffect(()=>{api('health').then(h=>{setKind(h.kind);setConfigured(h.live_configured);if(h.kind==='data')void refreshData().catch(e=>setError(e.message));}).catch(e=>setError(e.message));void refresh().catch(e=>setError(e.message));return()=>stream.current?.close();},[]);
+  useEffect(()=>{api('health').then(h=>{setKind(h.kind);setConfigured(h.live_configured);setAuthRequired(h.auth_required);if(h.kind==='data'){void refreshData().catch(e=>setError(e.message));void refreshKnowledge().catch(e=>setError(e.message));}}).catch(e=>setError(e.message));void refresh().catch(e=>setError(e.message));return()=>stream.current?.abort();},[]);
   async function run(){setBusy(true);setError('');try{const created=await api('tasks',{query,mode,dataset_id:dataset,metrics:browser?{}:{销售额:metric}});await load(created.id);await refresh();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
   async function action(name:string,body:unknown={}){if(!task)return;setBusy(true);setError('');try{await api('tasks/'+task.id+'/'+name,body);await load(task.id);await refresh();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
-  async function upload(file:File){setUploading(true);setError('');try{const form=new FormData();form.append('file',file);const response=await fetch('/api/datasets',{method:'POST',body:form});const data=await response.json();if(!response.ok)throw Error(data.detail);await refreshData();setDataset(data.id);}catch(e){setError((e as Error).message);}finally{setUploading(false);}}
+  async function upload(file:File){setUploading(true);setError('');try{const form=new FormData();form.append('file',file);const response=await authedFetch('/api/datasets',{method:'POST',body:form});const data=await response.json();if(!response.ok)throw Error(data.detail||'数据导入失败');await refreshData();setDataset(data.id);}catch(e){setError((e as Error).message);}finally{setUploading(false);}}
+  async function uploadKnowledge(file:File){setKnowledgeUploading(true);try{const form=new FormData();form.append('file',file);const response=await authedFetch('/api/knowledge',{method:'POST',body:form});const data=await response.json();if(!response.ok)throw Error(data.detail||'文档导入失败');await refreshKnowledge();setKnowledgeQuery(file.name.replace(/\.[^.]+$/,''));}catch(e){setError((e as Error).message);}finally{setKnowledgeUploading(false);}}
+  async function askKnowledge(){if(!knowledgeQuery.trim())return;setKnowledgeBusy(true);setKnowledgeAnswer('');setKnowledgeHits([]);try{const response=await authedFetch('/api/knowledge/answer?q='+encodeURIComponent(knowledgeQuery));const data=await response.json();if(!response.ok)throw Error(data.detail||'知识检索失败');setKnowledgeAnswer(data.answer);setKnowledgeHits(data.citations||[]);}catch(e){setError((e as Error).message);}finally{setKnowledgeBusy(false);}}
+  async function removeKnowledge(id:string){try{const response=await authedFetch('/api/knowledge/'+id,{method:'DELETE'});if(!response.ok)throw Error('删除文档失败');await refreshKnowledge();if(knowledgeHits.some(hit=>hit.document_id===id)){setKnowledgeHits([]);setKnowledgeAnswer('');}}catch(e){setError((e as Error).message);}}
+  async function downloadReport(id:string){try{const response=await authedFetch('/api/tasks/'+id+'/report');if(!response.ok)throw Error('报告下载失败');const url=URL.createObjectURL(await response.blob()),anchor=document.createElement('a');anchor.href=url;anchor.download='datacanvas-'+id.slice(0,8)+'.md';anchor.click();window.setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){setError((e as Error).message);}}
+  async function saveToken(){sessionStorage.setItem('datacanvas-token',tokenInput.trim());setTokenInput('');setError('');try{await refresh();if(kind==='data'){await refreshData();await refreshKnowledge();}}catch(e){setError((e as Error).message);}}
+  useEffect(()=>{if(dataset){void Promise.all([api('datasets/'+dataset+'/profile'),api('datasets/'+dataset+'/lineage').catch(()=>null)]).then(([profile,source])=>{setQuality(profile);setLineage(source);}).catch(()=>{setQuality(null);setLineage(null);});}else{setQuality(null);setLineage(null);}},[dataset]);
   const result=task?.state.result,plan=task?.state.plan;
   const currentDataset=datasets.find(d=>d.id===dataset);
   const isOpenDataset=currentDataset?.name==='uci_online_retail_sample.csv';
   const usage=task?.state.usage?.reduce((a,b)=>({input:a.input+(b.input_tokens||0),output:a.output+(b.output_tokens||0),ms:a.ms+b.latency_ms}),{input:0,output:0,ms:0});
   return <div className={'app '+(browser?'flow':'data')}>
     <aside><a className="brand" href="/"><span>{browser?'F':'D'}</span><div>{browser?'FlowPilot':'DataCanvas'}<small>{browser?'采购申请自动填报助手':'经营报表分析助手'}</small></div></a>
-      <button className="new-task" onClick={()=>{selected.current=null;stream.current?.close();setTask(null);setQuery('');setError('');}}>＋ 新建任务</button>
+      <button className="new-task" onClick={()=>{selected.current=null;stream.current?.abort();setTask(null);setQuery('');setError('');}}>＋ 新建任务</button>
       <div className="side-heading">任务记录 <span>{tasks.length}</span></div><nav>{tasks.map(t=><button key={t.id} className={task?.id===t.id?'selected':''} onClick={()=>void load(t.id).catch(e=>setError(e.message))}><span>{t.query}</span><small>{labels[t.status]} · {t.mode==='demo'?'演示':'模型'}</small></button>)}</nav>
       {!browser&&<><div className="side-heading">数据集 <span>{datasets.length}</span></div><label className="upload">{uploading?'导入中…':'↑ 导入 CSV / Excel'}<input type="file" accept=".csv,.xlsx" disabled={uploading} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);e.target.value='';}}/></label><p className="tiny">最大 5 MB / 20,000 行。已内置 UCI 真实零售交易开放数据。</p><div className="dataset-list">{datasets.map(d=><button key={d.id} className={d.id===dataset?'selected':''} onClick={()=>setDataset(d.id)}>{d.name}<small>{d.rows} 行 · {d.schema.length} 列</small></button>)}</div></>}
+      {authRequired&&<details className="auth-panel"><summary>共享工作区登录</summary><input type="password" value={tokenInput} onChange={e=>setTokenInput(e.target.value)} placeholder="粘贴访问令牌" autoComplete="current-password"/><button onClick={()=>void saveToken()} disabled={!tokenInput.trim()}>连接工作区</button></details>}
       <footer>樊旭阳 · AI 全栈项目实践<br/>React / TypeScript / FastAPI<br/>{browser?'页面观察 → 执行 → 验证':'字段口径 → SQL → 图表证据'}</footer></aside>
     <main><header><div><p className="eyebrow">{browser?'BROWSER WORKFLOW STUDIO':'DATACANVAS · 数据分析工作台'}</p><h1>{browser?'一句话准备采购申请':'让每一笔交易都能被看懂'}</h1><p className="subtitle">{browser?'提供部门、物品、数量、预算和用途，助手自动填表；核对后提交，返回申请回执。':'从真实交易数据出发，快速查看销售额、订单、商品和时间趋势。每个结果都附 SQL 与数据明细。'}</p></div><span className="local">● 本地运行</span></header>
+      {!browser&&quality&&<section className="quality-summary"><div><span className="section-kicker">数据质量与血缘</span><strong>{quality.rows.toLocaleString()} 行 · {quality.fields.length} 个字段</strong>{lineage&&<small>来源 {lineage.source_name} · SHA-256 {lineage.source_sha256.slice(0,12)}… · {new Date(lineage.ingested_at*1000).toLocaleString()}</small>}</div><div><b>{quality.issues.length}</b><small>项质量提示</small></div><div><b>{quality.issues.find(x=>x.type==='duplicate_rows')?.count||0}</b><small>重复记录</small></div><details><summary>查看字段检查</summary><ul>{quality.fields.map(field=><li key={field.name}>{field.name}：空值 {field.null_count} · 唯一值 {field.distinct_count}</li>)}</ul><ul>{quality.issues.map((issue,i)=><li key={i}>{issue.field||'整行'} · {issue.type} · {issue.count}</li>)}</ul></details></section>}
+      {opsMetrics&&<section className="ops-summary"><div><b>{Object.values(opsMetrics.tasks_by_status).reduce((a,b)=>a+b,0)}</b><small>分析任务</small></div><div><b>{opsMetrics.model_calls}</b><small>模型调用</small></div><div><b>{(opsMetrics.input_tokens+opsMetrics.output_tokens).toLocaleString()}</b><small>Token 用量</small></div><div><b>{Math.round(opsMetrics.model_latency_ms/Math.max(opsMetrics.model_calls,1))} ms</b><small>平均模型耗时</small></div><div><b>{opsMetrics.knowledge_documents}</b><small>知识文档</small></div></section>}
       {!browser&&<section className="dataset-overview"><div className="dataset-overview-top"><div><span className="section-kicker">当前数据集</span><h2>{currentDataset?.name||'正在读取数据集…'}</h2><p>{isOpenDataset?'UCI Online Retail · 英国线上零售交易 · 2010.12—2011.12':'当前表格已载入本地分析空间'}</p></div><span className={'source-pill '+(isOpenDataset?'open-source':'')}>{isOpenDataset?'开放数据 · CC BY 4.0':'本地数据'}</span></div><div className="overview-stats"><div><span>数据记录</span><strong>{currentDataset?.rows.toLocaleString('zh-CN')||'—'}</strong></div><div><span>可用字段</span><strong>{currentDataset?.schema.length||'—'}</strong></div><div><span>当前引擎</span><strong>DuckDB</strong></div><div><span>查询方式</span><strong>只读 SQL</strong></div></div></section>}
       <section className="composer"><div className="composer-top"><label>运行模式 <select value={mode} onChange={e=>setMode(e.target.value)}><option value="demo">演示规划</option><option value="live" disabled={!configured}>真实模型{configured?'':'（未配置）'}</option></select></label><span>{mode==='demo'?'未调用模型 · 实际执行工具与业务流程':'使用本地配置的兼容模型接口'}</span></div>
       <div className="query-heading"><label className="question-label" htmlFor="query">{browser?'填写本次采购需求':'想了解什么？'}</label><span>自然语言提问 · 自动生成 SQL</span></div><textarea id="query" placeholder={browser?'例如：为研发部申请 3 台笔记本电脑，预算 18000 元，用于开发测试。':'例如：按国家汇总销售额，或统计不同客户数。'} value={query} maxLength={2000} onChange={e=>setQuery(e.target.value)}/>
@@ -95,8 +126,9 @@ export default function App(){
       {!browser&&<div className="prompt-list" aria-label="常用分析"><span>试试：</span>{prompts.map(item=><button key={item} className="prompt-chip" onClick={()=>setQuery(item)}>{item}</button>)}</div>}
       {!browser&&<details className="metrics"><summary>指标口径与字段</summary><input aria-label="指标口径" value={metric} onChange={e=>setMetric(e.target.value)} maxLength={300}/><p>{currentDataset?.schema.map(x=>x.name+' ('+x.type+')').join(' · ')}</p></details>}
       <div className="composer-actions"><span className="privacy-note">数据在本机处理 · 结果可下载复核</span><button className="primary" disabled={busy||!query.trim()||(!browser&&!dataset)} onClick={run}>{busy?'正在分析…':browser?'准备执行 ↗':'生成分析 ↗'}</button></div></section>
+      {!browser&&<section className="knowledge-panel"><div className="knowledge-head"><div><span className="section-kicker">RAG · 检索增强生成</span><h2>企业知识库</h2><p>导入制度、产品资料或技术文档，检索片段附原文来源。</p></div><label className="knowledge-upload">{knowledgeUploading?'正在解析…':'＋ 导入文档'}<input type="file" accept=".pdf,.txt,.md,.csv" disabled={knowledgeUploading} onChange={e=>{const f=e.target.files?.[0];if(f)void uploadKnowledge(f);e.target.value='';}}/></label></div><div className="knowledge-search"><input aria-label="知识库问题" value={knowledgeQuery} onChange={e=>setKnowledgeQuery(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')void askKnowledge();}} placeholder="问一个需要查阅资料的问题…"/><button className="secondary-button" disabled={knowledgeBusy||!knowledgeQuery.trim()} onClick={()=>void askKnowledge()}>{knowledgeBusy?'检索中…':'检索并回答'}</button></div><div className="knowledge-meta"><span>{knowledgeDocs.length} 份文档</span><span>PDF · TXT · Markdown · CSV</span><span>{configured?'生成模型已连接':'未配置模型时提供检索原文'}</span></div>{knowledgeAnswer&&<div className="knowledge-response"><strong>回答</strong><p>{knowledgeAnswer}</p>{knowledgeHits.length>0&&<div className="knowledge-citations">{knowledgeHits.map(hit=><article key={hit.id}><div><b>{hit.filename}</b><span>第 {hit.page} 页 · 相关度 {hit.score}</span></div><p>{hit.content}</p></article>)}</div>}</div>}{knowledgeDocs.length>0&&<div className="knowledge-files">{knowledgeDocs.map(doc=><div key={doc.id}><span className="file-dot">●</span><div><strong>{doc.filename}</strong><small>{doc.chunks} 个检索片段 · {(doc.bytes/1024).toFixed(0)} KB</small></div><button aria-label={'删除 '+doc.filename} onClick={()=>void removeKnowledge(doc.id)}>删除</button></div>)}</div>}</section>}
       {error&&<div className="error" role="alert">{error}</div>}
-      {task&&<div className="task-status"><span className={'pill '+task.status}>{labels[task.status]}</span><code>任务 {task.id.slice(0,8)}</code><span className="grow"/>{task.status==='interrupted'&&<button onClick={()=>void action('resume')} disabled={busy}>恢复任务</button>}{['running','queued','awaiting_approval','interrupted'].includes(task.status)&&<button onClick={()=>void action('cancel')} disabled={busy}>取消任务</button>}{task.state.report&&<a href={'/api/tasks/'+task.id+'/report'}>导出 Markdown ↓</a>}</div>}
+      {task&&<div className="task-status"><span className={'pill '+task.status}>{labels[task.status]}</span><code>任务 {task.id.slice(0,8)}</code><span className="grow"/>{task.status==='interrupted'&&<button onClick={()=>void action('resume')} disabled={busy}>恢复任务</button>}{['running','queued','awaiting_approval','interrupted'].includes(task.status)&&<button onClick={()=>void action('cancel')} disabled={busy}>取消任务</button>}{task.state.report&&<button onClick={()=>void downloadReport(task.id)}>导出 Markdown ↓</button>}</div>}
       <div className="work-area"><section className="results"><div className="panel-heading"><h2>{browser?'执行结果与确认':'图表与分析证据'}</h2><span className="tiny">{task?.mode==='demo'?'演示规划 · 真实执行':''}</span></div>
       {!task?<div className="empty"><span>{browser?'⌘':'▥'}</span><h3>{browser?'先描述任务，再检查执行过程':'从一份数据和一个问题开始'}</h3><p>{browser?'内置采购门户支持完整的填写、确认和回执验证。':'内置 UCI 真实零售交易样本，也可上传自己的 CSV / Excel。'}</p></div>:<>
       {plan&&<div className="plan"><div className="plan-heading"><div><span className="section-kicker">分析口径</span><h3>{plan.chart?.title||plan.title||plan.goal}</h3></div>{plan.sql&&<button className="subtle-button" onClick={()=>{void navigator.clipboard.writeText(plan.sql||'').then(()=>{setCopied(true);window.setTimeout(()=>setCopied(false),1500);});}}>{copied?'已复制':'复制 SQL'}</button>}</div><p>{plan.metric_definition}</p>{plan.sql&&<pre><code>{plan.sql}</code></pre>}</div>}

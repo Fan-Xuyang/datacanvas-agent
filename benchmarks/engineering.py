@@ -68,7 +68,17 @@ def main():
 
         try:
             start()
-            ds = None if IS_BROWSER else client.get('/api/datasets').json()[0]['id']
+            if IS_BROWSER:
+                ds = None
+            else:
+                fixture_path = ROOT / 'tests/fixtures/regression_sales.csv'
+                with fixture_path.open('rb') as source:
+                    response = client.post(
+                        '/api/datasets',
+                        files={'file': (fixture_path.name, source, 'text/csv')},
+                    )
+                response.raise_for_status()
+                ds = response.json()['id']
             # Fixed, spaced subset of the synthetic suite; 6 page-tool + 6 DOM tasks.
             selected = suite['cases'][::8][:12] if IS_BROWSER else suite['cases'][::10]
             for index,case in enumerate(selected):
@@ -113,7 +123,10 @@ def main():
                     import csv
                     with (ROOT/'tests/fixtures/regression_sales.csv').open(encoding='utf-8') as source:
                         expected=oracle(list(csv.DictReader(source)),case['expected'])
-                    check('numeric_result_'+case['id'],matches(task['state']['result'],expected))
+                    check(
+                        'numeric_result_'+case['id'],
+                        matches(task['state']['result'],expected,case['expected']),
+                    )
                 check('completed_'+case['id'],task['status']=='completed')
                 report=client.get('/api/tasks/'+tid+'/report')
                 check('report_export_'+case['id'],report.status_code==200 and len(report.text)>100)

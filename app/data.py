@@ -5,6 +5,7 @@ import io
 import json
 import re
 import sys
+import time
 import uuid
 from pathlib import Path
 import duckdb
@@ -26,7 +27,7 @@ def normalize_column(value, index, used):
     return name
 
 
-def ingest(root, store, name, raw):
+def ingest(root, store, name, raw, tenant_id="local"):
     if len(raw) > 5 * 1024 * 1024:
         raise ValueError("文件最多 5 MB。")
     suffix = Path(name).suffix.lower()
@@ -102,12 +103,25 @@ def ingest(root, store, name, raw):
         import_path.unlink(missing_ok=True)
     with store.connect() as db:
         db.execute(
-            "INSERT INTO datasets VALUES(?,?,?,?)",
+            "INSERT INTO datasets(id,name,schema,rows,tenant_id) VALUES(?,?,?,?,?)",
             (
                 did,
                 Path(name).name[:100],
                 json.dumps(schema, ensure_ascii=False),
                 len(rows),
+                tenant_id,
+            ),
+        )
+        db.execute(
+            "INSERT INTO dataset_lineage VALUES(?,?,?,?,?,?,?)",
+            (
+                did,
+                tenant_id,
+                Path(name).name[:100],
+                hashlib.sha256(raw).hexdigest(),
+                time.time(),
+                len(rows),
+                len(columns),
             ),
         )
     return {"id": did, "name": Path(name).name, "schema": schema, "rows": len(rows)}

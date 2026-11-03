@@ -105,6 +105,8 @@ def offline_plan(query, schema):
         for key, words in METRICS.items()
         if any(word in text for word in words)
     ]
+    if "非空数量" in text:
+        matched_metrics = [key for key in matched_metrics if key != "quantity"]
     if len(matched_metrics) > 1:
         raise ValueError("规则模式每次分析一个指标，请分开提问。")
     metric = next(iter(matched_metrics), None)
@@ -120,8 +122,19 @@ def offline_plan(query, schema):
             raise ValueError("毛利需要 sales 和 cost 字段。")
         expression = '("sales" - "cost")'
         meaning = "毛利 = sales - cost，按每行记录计算后聚合"
-    elif metric in {"orders", "customers"}:
-        column = "invoice_no" if metric == "orders" else "customer_id"
+    elif metric == "orders":
+        if "invoice_no" in fields:
+            expression = 'COUNT(DISTINCT "invoice_no")'
+            meaning = "订单数 = 去重统计 invoice_no，空值不计入"
+            preaggregated_orders = False
+        elif "orders" in fields:
+            expression = '"orders"'
+            meaning = "订单数取自预聚合 orders 字段"
+            preaggregated_orders = True
+        else:
+            raise ValueError("订单数需要 invoice_no 或 orders 字段。")
+    elif metric == "customers":
+        column = "customer_id"
         if column not in fields:
             raise ValueError(f"{METRIC_LABELS[metric]}需要 {column} 字段。")
         expression = f'COUNT(DISTINCT "{column}")'
@@ -150,7 +163,9 @@ def offline_plan(query, schema):
         (op for op, words in operations if any(word in text for word in words)),
         "AVG" if metric == "unit_price" else "SUM",
     )
-    if metric in {"records", "orders", "customers"}:
+    if metric in {"records", "customers"} or (
+        metric == "orders" and not preaggregated_orders
+    ):
         aggregate = "COUNT"
 
     dimension_text = text
@@ -176,7 +191,9 @@ def offline_plan(query, schema):
     grouping = f'"{actual_dimension}"' if actual_dimension else "'全部记录'"
     aggregate_expression = (
         expression
-        if metric in {"orders", "customers"}
+        if metric == "customers" or (
+            metric == "orders" and not preaggregated_orders
+        )
         else f"{aggregate}({expression})"
     )
     if metric in {"sales", "unit_price"} and aggregate in {"SUM", "AVG"}:

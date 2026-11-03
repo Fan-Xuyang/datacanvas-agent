@@ -12,6 +12,18 @@
 
 报告会展示实际 SQL、结果表、数据集名称与内容校验值，结果表可下载为 CSV。支持销售额、商品数量、平均单价、不同发票数、不同客户数和原始记录数；国家、月份和商品编码可精确筛选。销售额口径为筛选后交易的数量乘英镑单价之和；样本排除了取消单、退货及零价明细，没有成本字段。
 
+## 企业知识库
+
+在工作台“企业知识库”区域导入 PDF / TXT / Markdown / CSV，可检索原文或查看有来源引用的回答。每个命中项保留文档名和页码；删除文档会一并移除全文索引和片段。无模型配置时页面明确显示检索片段，不生成答案。
+
+在 `.env` 设置 `AI_API_KEY`、`AI_BASE_URL` 和 `AI_MODEL` 可启用回答生成。DeepSeek 示例使用 `https://api.deepseek.com/v1` 与 `deepseek-chat`。Embedding 需独立配置 `AI_EMBEDDING_API_KEY`、`AI_EMBEDDING_BASE_URL`、`AI_EMBEDDING_MODEL`；有 embedding 时新导入文档会保存向量，并与 FTS5 结果做 reciprocal-rank fusion。旧文档需要重新导入以生成向量。向量按本地 SQLite 保存，适合本地与小规模样本；大规模生产还需接入 Qdrant 等专用向量服务。
+
+## 共享部署的身份与租户
+
+本地默认单用户。共享实例需启用 `DATACANVAS_AUTH_REQUIRED=true`，并把 `DATACANVAS_TOKENS` 配成 bearer token 到 `tenant_id`、`role`、`sub` 的映射。角色支持 `admin`、`analyst`、`viewer`；viewer 为只读，只有 admin 能查看 `/api/audit`。数据集、任务、知识文档和审计查询按 token 关联的 tenant 隔离。Token 只放入被忽略的 `.env` 或密钥管理服务，不要提交到 Git。
+
+内置 bearer 验证是单实例运行时的基础保护，企业身份联邦应由 OIDC/SSO 网关负责；上线时还需启用 HTTPS、限制网络入口并使用集中密钥管理。
+
 ## 结构与限制
 
 | 模块 | 说明 |
