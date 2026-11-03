@@ -55,6 +55,21 @@ def test_open_retail_sample_plans_and_executes_country_sales(tmp_path):
     assert task["status"] == "completed"
     assert task["state"]["result"]["rows"][0] == ["United Kingdom", 324810.0]
 
+    orders = demo_plan("按国家统计订单数", dataset["schema"])
+    customers = demo_plan("按国家统计不同客户数", dataset["schema"])
+    average_price = demo_plan("按国家查看平均单价", dataset["schema"])
+    assert 'COUNT(DISTINCT "invoice_no")' in orders.sql
+    assert 'COUNT(DISTINCT "customer_id")' in customers.sql
+    assert 'AVG("unit_price")' in average_price.sql
+
+    filtered = demo_plan("筛选国家=France，按月份汇总销售额", dataset["schema"])
+    assert 'WHERE "country" = \'France\'' in filtered.sql
+    filtered_result = asyncio.run(
+        execute(tmp_path / f"{dataset['id']}.duckdb", filtered.sql)
+    )
+    assert filtered_result["rows"]
+    assert all(month.startswith("201") for month, _ in filtered_result["rows"])
+
 
 @pytest.mark.parametrize(
     "sql",
