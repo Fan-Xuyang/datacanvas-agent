@@ -210,7 +210,7 @@ class DataAgent:
                 )
         state["result"] = result
         state["report"] = (
-            f"# {plan.title}\n\n问题：{task['query']}\n\n模式：{'演示规划（未调用模型）' if task['mode'] == 'demo' else '模型规划，数据由实际 SQL 计算'}\n\n指标口径：{plan.metric_definition}\n\n```sql\n{result['sql']}\n```\n\n返回 {len(result['rows'])} 行。{'已截断，只显示前 500 行。' if result['truncated'] else ''}\n\n数据集：{dataset['name']}\n结果校验值：{result['checksum']}\n\n数据只说明当前样本，未做因果推断。"
+            f"# {plan.title}\n\n问题：{task['query']}\n\n规划方式：{'规则规划，SQL 经实际执行' if task['mode'] == 'demo' else '大模型规划，SQL 经实际执行'}\n\n指标口径：{plan.metric_definition}\n\n```sql\n{result['sql']}\n```\n\n返回 {len(result['rows'])} 行。{'已截断，只显示前 500 行。' if result['truncated'] else ''}\n\n数据集：{dataset['name']}\n结果校验值：{result['checksum']}\n\n数据只说明当前样本，未做因果推断。"
         )
         if sources:
             state["report"] += "\n\n## 相关知识库证据\n\n" + "\n".join(

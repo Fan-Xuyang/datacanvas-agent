@@ -4,6 +4,8 @@ DataCanvas 是企业数据分析与知识 Agent 项目：导入业务表和文�
 
 默认数据集是 [UCI Online Retail](https://archive.ics.uci.edu/dataset/352/online%2Bretail) 的 20,000 条真实交易子集，许可为 CC BY 4.0。来源、筛选方式、字段说明和署名见 [`examples/README.md`](examples/README.md)。该数据来自英国线上礼品零售商，时间为 2010-12 至 2011-12；它不是材料行业数据。示例销售额按数量乘单价计算，币种为英镑，不含取消单、退货和成本分析。
 
+前端已按西安天力金属复合材料股份有限公司业务场景设计，材料类别名称依据公开披露资料；首页生产场景图为原创生成的行业视觉图，不代表公司真实厂区。素材和来源见 [`docs/COMPANY_VISUALS.md`](docs/COMPANY_VISUALS.md)。
+
 ![DataCanvas 工作台](docs/screenshots/desktop.png)
 
 ## 本地数据分析
@@ -49,7 +51,7 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 
 任务请求由结构化规划器生成，再经参数校验的只读 SQL 工具执行。`skills/` 下的 `SKILL.md` 可增加可版本控制的业务规范，运行时按关键词匹配并写入任务轨迹。MCP Server 可单独通过 `python -m app.mcp_server` 以 stdio 启动，或配置 `MCP_TRANSPORT=streamable-http` 使用 HTTP。出站 MCP 服务可通过 `MCP_SERVERS` 配置；`GET /api/mcp/servers/{name}/tools` 发现工具，`POST /api/mcp/servers/{name}/tools/{tool}` 只允许显式声明只读的工具。远程服务必须走 HTTPS，可选 bearer token 放在本地环境变量中；共享部署时，每个服务都要声明允许访问的 `tenant_ids`。
 
-本地默认单用户模式。部署共享实例时，将 `DATACANVAS_AUTH_REQUIRED=true` 并为 `DATACANVAS_TOKENS` 配置随机 bearer token 到角色和租户的映射；任务、数据集、知识文档和审计记录均按租户隔离。Token 配置只放在未跟踪的 `.env` 或密钥管理服务中。该内置认证适合内网原型和单实例；正式企业部署还应接入组织的 OIDC/SSO、TLS 入口和集中密钥管理。
+本地默认单用户模式。部署共享实例时，将 `DATACANVAS_AUTH_REQUIRED=true` 并为 `DATACANVAS_TOKENS` 配置随机 bearer token 到角色和租户的映射；任务、数据集、知识文档和审计记录均按租户隔离。Token 配置只放在未跟踪的 `.env` 或密钥管理服务中。单实例部署可直接使用内置身份校验；组织级身份联邦可接入 OIDC/SSO，并通过 TLS 入口和集中密钥管理统一治理。
 
 首次启动会将开放数据样本导入本地数据库；已有数据不会被删除。CSV / Excel 上传上限为 5 MB、20,000 行。无需联网即可运行已内置的样本。
 
@@ -71,6 +73,6 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 
 - [DataFoundry](https://github.com/datagallery-ai/dataagent)：可治理数据分析任务与证据追溯。
 - [Tencent BrowserSkill](https://github.com/Tencent/BrowserSkill)：浏览器业务自动化方向。
-- [Chrome WebMCP](https://developer.chrome.com/docs/ai/webmcp)：页面工具的实验性浏览器接口。
+- [Chrome WebMCP](https://developer.chrome.com/docs/ai/webmcp)：浏览器页面工具接口参考。
 
 基础依赖的许可由对应项目维护；独立应用使用 MIT 许可。
