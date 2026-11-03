@@ -1,6 +1,8 @@
 # DataCanvas 经营报表分析 Agent
 
-个人独立设计与搭建的 AI 全栈应用：上传 CSV / Excel，描述分析目标，执行结构化规划与只读 SQL，生成图表、表格及证据报告。应用业务代码从空目录实现，使用 React / TypeScript、FastAPI、DuckDB、SQLGlot、Pydantic、SQLite 和 SSE。
+面向材料行业经营分析业务设计并获业务方采纳的 AI 全栈应用：上传 CSV / Excel，描述分析目标，执行结构化规划与只读 SQL，生成图表、表格及证据报告。应用由个人独立设计搭建，使用 React / TypeScript、FastAPI、DuckDB、SQLGlot、Pydantic、SQLite 和 SSE。
+
+本公开仓库是可复现的演示与工程验证版本，样例数据为合成数据，不含企业业务数据、凭据或生产配置。仓库中的固定规则评测验证查询与工程流程，不代表外部模型准确率或企业线上运行指标。
 
 ![DataCanvas 工作台](docs/screenshots/desktop.png)
 
@@ -46,7 +48,7 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 
 应用仅供本地单用户作品展示，没有生产鉴权；示例数据与门户均为合成内容。密钥、数据库、依赖目录不提交 Git。模型返回内容一律经过结构化校验，仍需用户核对业务含义。
 
-实现与面试讨论见 [工程说明](docs/INTERVIEW.md)。
+实现与面试讨论见 [工程说明](docs/INTERVIEW.md)，简历项目表述见 [项目描述](docs/简历项目描述.md)。
 
 ## 设计参考
 
