@@ -8,7 +8,16 @@ METRICS = {
     'profit': ('毛利', '利润', 'profit'),
     'records': ('记录数', '记录条数', '数据条数', 'records'),
 }
-DIMENSIONS = {'region': ('地区', '区域', 'region'), 'product': ('产品', '品类', 'product'), 'month': ('月份', '按月', '每月', '月度', '趋势', 'month')}
+DIMENSIONS = {'region': ('地区', '区域', '国家', 'country', 'region'), 'product': ('产品', '品类', '商品', 'product'), 'month': ('月份', '按月', '每月', '月度', '趋势', 'month')}
+
+
+def dimension_field(dimension, fields):
+    aliases = {
+        'region': ('region', 'country'),
+        'product': ('product', 'description', 'stock_code'),
+        'month': ('month',),
+    }
+    return next((name for name in aliases[dimension] if name in fields), None)
 
 
 def offline_plan(query, schema):
@@ -43,7 +52,8 @@ def offline_plan(query, schema):
         raise ValueError('规则模式每次分析一个分组维度，请分开提问。')
     dimension=next(iter(matched_dimensions),None)
     if any(word in text for word in ['总体','全部','整体','总计','overall']):dimension=None
-    if dimension and dimension not in fields:raise ValueError('数据集缺少分组字段：'+dimension)
+    actual_dimension = dimension_field(dimension, fields) if dimension else None
+    if dimension and not actual_dimension:raise ValueError('数据集缺少分组字段：'+dimension)
     # Do not quietly drop arbitrary user filters. Support a finite, documented equality filter.
     filters=[]
     for field,values in [('region',['华东','华北','西北']),('product',['工业设备','技术服务'])]:
@@ -53,9 +63,12 @@ def offline_plan(query, schema):
             if field not in fields:raise ValueError('数据集缺少筛选字段：'+field)
             filters.append('"'+field+'" = \''+matched[0]+"'")
     where=' WHERE '+' AND '.join(filters) if filters else ''
-    grouping='"'+dimension+'"' if dimension else "'全部记录'"
-    sql=f'SELECT {grouping} AS category, {aggregate}({expression}) AS value FROM data'+where
-    if dimension:sql+=' GROUP BY "'+dimension+'"'
+    grouping='"'+actual_dimension+'"' if actual_dimension else "'全部记录'"
+    aggregate_expression=f'{aggregate}({expression})'
+    if metric=='sales' and aggregate=='SUM':
+        aggregate_expression=f'ROUND({aggregate_expression}, 2)'
+    sql=f'SELECT {grouping} AS category, {aggregate_expression} AS value FROM data'+where
+    if actual_dimension:sql+=' GROUP BY "'+actual_dimension+'"'
     sql+=' ORDER BY '+('category' if dimension=='month' else 'value DESC')
     top=re.search(r'(?:前|top\s*)(\d+)',text)
     limit=min(int(top.group(1)),100) if top else 20

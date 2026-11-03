@@ -83,15 +83,23 @@ def ingest(root, store, name, raw):
         {"name": n, "type": "DOUBLE" if numeric[i] else "VARCHAR"}
         for i, n in enumerate(columns)
     ]
+    import_path = Path(root) / f"{did}.import.csv"
+    with import_path.open("w", encoding="utf-8", newline="") as f:
+        csv.writer(f).writerows(converted)
     c = duckdb.connect(str(path))
     try:
-        defs = ",".join('"' + x["name"] + '" ' + x["type"] for x in schema)
-        c.execute("CREATE TABLE data (" + defs + ")")
-        c.executemany(
-            "INSERT INTO data VALUES(" + ",".join("?" for _ in columns) + ")", converted
+        type_map = ",".join(
+            "'" + item["name"].replace("'", "''") + "': '" + item["type"] + "'"
+            for item in schema
+        )
+        c.execute(
+            "CREATE TABLE data AS SELECT * FROM read_csv(?, header=false, "
+            "columns={" + type_map + "}, nullstr='')",
+            [str(import_path)],
         )
     finally:
         c.close()
+        import_path.unlink(missing_ok=True)
     with store.connect() as db:
         db.execute(
             "INSERT INTO datasets VALUES(?,?,?,?)",

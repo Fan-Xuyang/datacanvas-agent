@@ -111,7 +111,7 @@ def main():
                 else:
                     from evaluate import oracle, matches
                     import csv
-                    with (ROOT/'examples/sales.csv').open(encoding='utf-8') as source:
+                    with (ROOT/'tests/fixtures/regression_sales.csv').open(encoding='utf-8') as source:
                         expected=oracle(list(csv.DictReader(source)),case['expected'])
                     check('numeric_result_'+case['id'],matches(task['state']['result'],expected))
                 check('completed_'+case['id'],task['status']=='completed')

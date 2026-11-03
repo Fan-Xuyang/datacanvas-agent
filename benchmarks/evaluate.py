@@ -39,11 +39,11 @@ def matches(result,expected):
 async def main():
     suite_path=ROOT/'benchmarks/cases.json'
     suite=json.loads(suite_path.read_text(encoding='utf-8'))
-    rows=list(csv.DictReader((ROOT/'examples/sales.csv').open(encoding='utf-8')))
+    rows=list(csv.DictReader((ROOT/'tests/fixtures/regression_sales.csv').open(encoding='utf-8')))
     outputs={}
     with tempfile.TemporaryDirectory() as temp:
         store=Store(Path(temp)/'state.db')
-        ds=ingest(temp,store,'sales.csv',(ROOT/'examples/sales.csv').read_bytes())
+        ds=ingest(temp,store,'sales.csv',(ROOT/'tests/fixtures/regression_sales.csv').read_bytes())
         for name,planner in [('v1',baseline_plan),('v2',demo_plan)]:
             results=[]
             for case in suite['cases']:

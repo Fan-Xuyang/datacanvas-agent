@@ -12,7 +12,7 @@ from app.agent import DataAgent, ChartSpec, demo_plan
 def data(tmp_path):
     store = Store(tmp_path / "state.sqlite3")
     dataset = ingest(
-        tmp_path, store, "sales.csv", (ROOT / "examples/sales.csv").read_bytes()
+        tmp_path, store, "sales.csv", (ROOT / "tests/fixtures/regression_sales.csv").read_bytes()
     )
     return tmp_path, store, dataset
 
@@ -34,6 +34,26 @@ def test_real_query_and_evidence(data):
     assert len(result["checksum"]) == 64
     assert result["checksum"] in task["state"]["report"]
     assert "626000" in task["state"]["report"]
+
+
+def test_open_retail_sample_plans_and_executes_country_sales(tmp_path):
+    store = Store(tmp_path / "state.sqlite3")
+    dataset = ingest(
+        tmp_path,
+        store,
+        "uci_online_retail_sample.csv",
+        (ROOT / "examples/uci_online_retail_sample.csv").read_bytes(),
+    )
+    plan = demo_plan("按国家汇总销售额", dataset["schema"])
+    assert '"country"' in plan.sql
+    assert "ROUND(SUM(\"sales\"), 2)" in plan.sql
+
+    tid = store.create("data", "按国家汇总销售额", "demo", {"dataset": dataset})
+    assert store.claim(tid, ["queued"])
+    asyncio.run(DataAgent(store, tmp_path).run(tid))
+    task = store.get(tid)
+    assert task["status"] == "completed"
+    assert task["state"]["result"]["rows"][0] == ["United Kingdom", 324810.0]
 
 
 @pytest.mark.parametrize(

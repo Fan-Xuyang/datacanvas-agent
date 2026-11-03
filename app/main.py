@@ -25,12 +25,13 @@ def prepare(request, store):
 
 
 app, store, root = base_app(PROJECT, "data", DataAgent, prepare)
+sample = PROJECT / "examples/uci_online_retail_sample.csv"
 with store.connect() as c:
-    count = c.execute("SELECT COUNT(*) FROM datasets").fetchone()[0]
-if not count:
-    sample = PROJECT / "examples/sales.csv"
-    if sample.exists():
-        ingest(root, store, sample.name, sample.read_bytes())
+    sample_exists = c.execute(
+        "SELECT 1 FROM datasets WHERE name=? LIMIT 1", (sample.name,)
+    ).fetchone()
+if sample.exists() and not sample_exists:
+    ingest(root, store, sample.name, sample.read_bytes())
 
 
 @app.get("/api/datasets")
