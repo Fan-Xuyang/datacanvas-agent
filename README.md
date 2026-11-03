@@ -4,7 +4,7 @@ DataCanvas 是企业数据分析与知识 Agent 项目：导入业务表和文�
 
 默认数据集是 [UCI Online Retail](https://archive.ics.uci.edu/dataset/352/online%2Bretail) 的 20,000 条真实交易子集，许可为 CC BY 4.0。来源、筛选方式、字段说明和署名见 [`examples/README.md`](examples/README.md)。该数据来自英国线上礼品零售商，时间为 2010-12 至 2011-12；它不是材料行业数据。示例销售额按数量乘单价计算，币种为英镑，不含取消单、退货和成本分析。
 
-前端已按西安天力金属复合材料股份有限公司业务场景设计，材料类别名称依据公开披露资料；首页生产场景图为原创生成的行业视觉图，不代表公司真实厂区。素材和来源见 [`docs/COMPANY_VISUALS.md`](docs/COMPANY_VISUALS.md)。
+前端已按西安天力金属复合材料股份有限公司业务场景设计，材料类别名称依据公开披露资料；首页以代码绘制的金属层状结构示意图展示材料构成，不代表公司真实厂区或具体产品截面。素材和来源见 [`docs/COMPANY_VISUALS.md`](docs/COMPANY_VISUALS.md)。
 
 ![DataCanvas 工作台](docs/screenshots/desktop.png)
 
@@ -76,3 +76,4 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 - [Chrome WebMCP](https://developer.chrome.com/docs/ai/webmcp)：浏览器页面工具接口参考。
 
 基础依赖的许可由对应项目维护；独立应用使用 MIT 许可。
+
