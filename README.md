@@ -67,6 +67,8 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 
 企业能力范围与建设状态见[能力清单](docs/ENTERPRISE_CAPABILITIES.md)。
 
+面向 AI Agent 工程师岗位的职责映射、演示顺序和能力边界见[岗位能力对照](docs/ROLE_ALIGNMENT.md)。
+
 ## 设计参考
 
 应用独立实现，没有 fork 或复制参考项目的业务代码。参考产品方向与官方资料：
