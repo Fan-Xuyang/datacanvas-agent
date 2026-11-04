@@ -18,6 +18,8 @@
 
 在 `.env` 设置 `AI_API_KEY`、`AI_BASE_URL` 和 `AI_MODEL` 可启用回答生成。DeepSeek 示例使用 `https://api.deepseek.com/v1` 与 `deepseek-chat`。Embedding 需独立配置 `AI_EMBEDDING_API_KEY`、`AI_EMBEDDING_BASE_URL`、`AI_EMBEDDING_MODEL`；有 embedding 时新导入文档会保存向量，并与 FTS5 结果做 reciprocal-rank fusion。旧文档需要重新导入以生成向量。向量按本地 SQLite 保存，适合本地与小规模样本；大规模生产还需接入 Qdrant 等专用向量服务。
 
+配置 Embedding 后，还可设置 `QDRANT_URL`、`QDRANT_API_KEY` 和可选的 `QDRANT_COLLECTION_PREFIX` 启用 Qdrant 向量索引。系统按嵌入模型和维度创建集合，写入仅含 chunk ID、租户 ID 和模型名的 payload；原文仍由本地知识库按租户过滤读取。Qdrant 不可用时检索请求会返回服务错误，避免静默切换到全量扫描。未配置 Qdrant 时使用本地 SQLite 向量余弦检索。
+
 ## 共享部署的身份与租户
 
 本地默认单用户。共享实例需启用 `DATACANVAS_AUTH_REQUIRED=true`，并把 `DATACANVAS_TOKENS` 配成 bearer token 到 `tenant_id`、`role`、`sub` 的映射。角色支持 `admin`、`analyst`、`viewer`；viewer 为只读，只有 admin 能查看 `/api/audit`。数据集、任务、知识文档和审计查询按 token 关联的 tenant 隔离。Token 只放入被忽略的 `.env` 或密钥管理服务，不要提交到 Git。

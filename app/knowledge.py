@@ -12,6 +12,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from shared.model import configured, embed_texts, structured
+from .vector_store import QdrantIndex
 
 
 MAX_DOCUMENT_BYTES = 5 * 1024 * 1024
@@ -96,6 +97,7 @@ def _chunk_pages(pages):
 class KnowledgeBase:
     def __init__(self, store):
         self.store = store
+        self.vector_index = QdrantIndex()
         with store.connect() as db:
             db.executescript(
                 """
@@ -194,6 +196,16 @@ class KnowledgeBase:
                     for row in records
                 ],
             )
+        vector_indexed = False
+        if vectors and self.vector_index.enabled:
+            vector_indexed = await self.vector_index.upsert(
+                [
+                    {"id": row[0], "vector": vectors[index]}
+                    for index, row in enumerate(records)
+                ],
+                embedding_model,
+                tenant_id,
+            )
         return {
             "id": doc_id,
             "tenant_id": tenant_id,
@@ -204,6 +216,7 @@ class KnowledgeBase:
             "duplicate": False,
             "embedding_model": embedding_model,
             "embedding_usage": embedding_usage,
+            "vector_index": "qdrant" if vector_indexed else "sqlite",
         }
 
     def documents(self, tenant_id="local"):
@@ -284,22 +297,39 @@ class KnowledgeBase:
             except Exception:
                 pass
             if query_vector is not None:
-                for row in db.execute(
-                    "SELECT c.id,c.doc_id,d.filename,c.page,c.content,c.embedding "
-                    "FROM knowledge_chunks c JOIN knowledge_docs d ON d.id=c.doc_id "
-                    "WHERE c.tenant_id=? AND c.embedding_model=? "
-                    "AND c.embedding IS NOT NULL "
-                    "LIMIT 20_000",
-                    (tenant_id, embedding_model),
-                ):
-                    vector = json.loads(row[5])
-                    if len(vector) != len(query_vector):
-                        continue
-                    dot = sum(a * b for a, b in zip(query_vector, vector))
-                    norm_a = math.sqrt(sum(a * a for a in query_vector))
-                    norm_b = math.sqrt(sum(b * b for b in vector))
-                    score = dot / (norm_a * norm_b) if norm_a and norm_b else 0
-                    vector_rows.append((score, row))
+                remote = await self.vector_index.search(
+                    query_vector, embedding_model, tenant_id, limit=40
+                )
+                if remote is not None:
+                    remote_scores = dict(remote)
+                    if remote_scores:
+                        placeholders = ",".join("?" for _ in remote_scores)
+                        remote_rows = db.execute(
+                            "SELECT c.id,c.doc_id,d.filename,c.page,c.content,c.embedding "
+                            "FROM knowledge_chunks c JOIN knowledge_docs d ON d.id=c.doc_id "
+                            f"WHERE c.tenant_id=? AND c.embedding_model=? AND c.id IN ({placeholders})",
+                            (tenant_id, embedding_model, *remote_scores),
+                        ).fetchall()
+                        vector_rows.extend(
+                            (remote_scores[row[0]], row) for row in remote_rows
+                        )
+                else:
+                    for row in db.execute(
+                        "SELECT c.id,c.doc_id,d.filename,c.page,c.content,c.embedding "
+                        "FROM knowledge_chunks c JOIN knowledge_docs d ON d.id=c.doc_id "
+                        "WHERE c.tenant_id=? AND c.embedding_model=? "
+                        "AND c.embedding IS NOT NULL "
+                        "LIMIT 20_000",
+                        (tenant_id, embedding_model),
+                    ):
+                        vector = json.loads(row[5])
+                        if len(vector) != len(query_vector):
+                            continue
+                        dot = sum(a * b for a, b in zip(query_vector, vector))
+                        norm_a = math.sqrt(sum(a * a for a in query_vector))
+                        norm_b = math.sqrt(sum(b * b for b in vector))
+                        score = dot / (norm_a * norm_b) if norm_a and norm_b else 0
+                        vector_rows.append((score, row))
         vector_rows.sort(key=lambda item: item[0], reverse=True)
         dense = {
             row[0]: (rank, row)
