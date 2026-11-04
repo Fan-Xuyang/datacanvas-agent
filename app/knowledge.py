@@ -3,16 +3,20 @@
 import hashlib
 import json
 import math
+import os
 import re
+import shutil
 import time
 import uuid
 from io import BytesIO
 from pathlib import Path
 
+import httpx
 from pydantic import BaseModel, Field
 
 from shared.model import configured, embed_texts, structured
 from .vector_store import QdrantIndex
+from .reranker import rerank as semantic_rerank
 
 
 MAX_DOCUMENT_BYTES = 5 * 1024 * 1024
@@ -59,6 +63,11 @@ def _extract_text(filename, raw):
         pages = []
         for number, page in enumerate(reader.pages[:200], start=1):
             text = page.extract_text() or ""
+            if (
+                not text.strip()
+                and os.getenv("OCR_ENABLED", "false").lower() == "true"
+            ):
+                text = _ocr_pdf_page(raw, number - 1)
             if text.strip():
                 pages.append((number, text))
     elif suffix in {".txt", ".md", ".csv"}:
@@ -70,6 +79,33 @@ def _extract_text(filename, raw):
     if not any(text.strip() for _, text in pages):
         raise ValueError("文档没有可检索的文本；扫描版 PDF 需要先做 OCR。")
     return pages
+
+
+def _ocr_pdf_page(raw, page_index):
+    if not shutil.which(os.getenv("TESSERACT_CMD", "tesseract")):
+        raise ValueError(
+            "检测到扫描版 PDF，但未找到 Tesseract；请安装 OCR 引擎或关闭 OCR_ENABLED。"
+        )
+    try:
+        import pymupdf
+        import pytesseract
+        from PIL import Image
+
+        command = os.getenv("TESSERACT_CMD", "tesseract")
+        pytesseract.pytesseract.tesseract_cmd = command
+        with pymupdf.open(stream=raw, filetype="pdf") as document:
+            page = document.load_page(page_index)
+            pixmap = page.get_pixmap(matrix=pymupdf.Matrix(2, 2), alpha=False)
+            image = Image.open(BytesIO(pixmap.tobytes("png")))
+            return pytesseract.image_to_string(
+                image, lang=os.getenv("TESSERACT_LANG", "eng+chi_sim")
+            )
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(
+            "扫描版 PDF OCR 失败，请检查 Tesseract 语言包和文件内容。"
+        ) from exc
 
 
 def _chunk_pages(pages):
@@ -198,14 +234,26 @@ class KnowledgeBase:
             )
         vector_indexed = False
         if vectors and self.vector_index.enabled:
-            vector_indexed = await self.vector_index.upsert(
-                [
-                    {"id": row[0], "vector": vectors[index]}
-                    for index, row in enumerate(records)
-                ],
-                embedding_model,
-                tenant_id,
-            )
+            try:
+                vector_indexed = await self.vector_index.upsert(
+                    [
+                        {"id": row[0], "vector": vectors[index]}
+                        for index, row in enumerate(records)
+                    ],
+                    embedding_model,
+                    tenant_id,
+                )
+            except Exception as exc:
+                with self.store.connect() as db:
+                    db.executemany(
+                        "DELETE FROM knowledge_fts WHERE chunk_id=?",
+                        [(row[0],) for row in records],
+                    )
+                    db.execute("DELETE FROM knowledge_chunks WHERE doc_id=?", (doc_id,))
+                    db.execute("DELETE FROM knowledge_docs WHERE id=?", (doc_id,))
+                raise ValueError(
+                    "Qdrant 向量写入失败，文档已回滚；请检查服务连接和集合状态。"
+                ) from exc
         return {
             "id": doc_id,
             "tenant_id": tenant_id,
@@ -360,17 +408,26 @@ class KnowledgeBase:
             )
             combined[chunk_id] = (score, row)
         candidates = list(combined.values())
-        max_rrf = max((score for score, _ in candidates), default=1) or 1
-        reranked = []
-        for score, row in candidates:
-            content = row[4].casefold()
-            coverage = sum(term.casefold() in content for term in set(terms)) / max(
-                len(set(terms)), 1
-            )
-            exact_phrase = 1.0 if query.casefold() in content else 0.0
-            rerank_score = 0.65 * (score / max_rrf) + 0.35 * coverage + 0.1 * exact_phrase
-            reranked.append((rerank_score, row))
-        ranked = sorted(reranked, key=lambda item: item[0], reverse=True)[:limit]
+        try:
+            reranked = await semantic_rerank(query, candidates, limit=limit)
+        except (httpx.HTTPError, ValueError, KeyError, TypeError):
+            reranked = None
+        if reranked is not None:
+            ranked = reranked
+        else:
+            max_rrf = max((score for score, _ in candidates), default=1) or 1
+            reranked = []
+            for score, row in candidates:
+                content = row[4].casefold()
+                coverage = sum(term.casefold() in content for term in set(terms)) / max(
+                    len(set(terms)), 1
+                )
+                exact_phrase = 1.0 if query.casefold() in content else 0.0
+                rerank_score = (
+                    0.65 * (score / max_rrf) + 0.35 * coverage + 0.1 * exact_phrase
+                )
+                reranked.append((rerank_score, row))
+            ranked = sorted(reranked, key=lambda item: item[0], reverse=True)[:limit]
         return [
             {
                 "id": row[0],

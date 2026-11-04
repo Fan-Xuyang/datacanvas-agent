@@ -1,39 +1,40 @@
-# DataCanvas 能力范围与边界
+# DataCanvas AI Agent 工程能力
 
-这里记录的是当前代码实际提供的能力。运行在本地的完整 Agent 应用不等于已经具备多副本、高可用、企业 SSO 的生产平台；未验证的能力不标记为已完成。
+## AI 应用与模型服务
 
-| 技能域 | 当前可运行能力 | 仍需补齐的生产能力 |
-| --- | --- | --- |
-| LLM 接入 | OpenAI-compatible chat API；可配置 DeepSeek；结构化 JSON 输出、单次修复、token 与延迟记录 | Provider 路由、熔断/预算、成本计价、密钥托管、模型级并发控制 |
-| RAG | PDF/TXT/Markdown/CSV 解析，分块、租户过滤、FTS5 BM25、可选向量召回、RRF、轻量词项重排、引用 ID 校验；提供按人工标注 Chunk ID 评测 Recall@k/Precision@k/MRR 的 API | Qdrant/pgvector 持久向量服务、Cross-Encoder 重排、OCR、增量更新、经业务审核维护的黄金集 |
-| Agent Harness | Pydantic 参数校验的工具注册、超时、只读 SQL、SQL AST 校验、持久化事件、重启恢复 | 独立工作队列、全局预算、工具幂等键、重试/退避、隔离沙箱、审批策略 DSL |
-| Agent 工作流 | 知识检索 → 规划 → 工具执行 → 结果验证 → 报告；步骤有事件记录 | 角色化多 Agent 并行/交接、可视化 DAG、检查点版本迁移 |
-| Agent Skills | `skills/*/SKILL.md` 版本化业务规范，按关键词选择，写入任务事件 | 完整 frontmatter/schema 校验、Skill 测试集、远端分发和权限签名 |
-| MCP | 官方 Python SDK 的 MCP Server，提供数据集、只读分析、知识搜索/问答工具和资源/Prompt；stdio 与 Streamable HTTP；可配置出站 Client，发现并调用声明只读的工具 | 持久连接池、OAuth 委托授权、写工具审批/幂等、MCP 远端工具的模型自主规划 |
-| 数据工程 | CSV/XLSX 导入，schema 推断、文件 SHA-256、来源血缘、空值/唯一度/重复行剖析 | 可复用 ETL DAG、Schema 演进、质量规则管理、告警、增量 CDC |
-| Text-to-SQL | 结构化计划、业务指标词典、SQLGlot 只读约束、DuckDB 隔离子进程和数值回归 | 多表语义层、列级权限、复杂查询计划、真实业务指标黄金集 |
-| 大数据 | 本地 DuckDB 路径适合中小文件；未伪称分布式处理 | Hadoop/Spark/Flink 批流任务、元数据目录和集群部署 |
-| 企业安全 | Bearer token → 角色/租户映射；任务、数据集、知识和审计按租户隔离；viewer 只读 | OIDC/SSO、密钥管理、TLS/网络策略、行列级 ACL、审计防篡改、渗透测试 |
-| 评测与观测 | 固定 SQL 结果与拒绝用例基准、人工标注 RAG 检索评测 API、运行事件流、token/延迟计数、租户审计、数据质量概览 | 持续维护的 RAG/Agent 黄金集、OpenTelemetry traces、Prometheus 告警、线上漂移评估 |
-| 部署与恢复 | Windows 本地启动、SQLite + DuckDB、健康接口、进程重启恢复 | Docker/Compose、PostgreSQL、Redis 队列、对象存储、备份恢复演练、多副本 HA |
+- OpenAI-compatible Chat Completions 与 Embeddings 接口，可配置 DeepSeek 或其他兼容服务。
+- Pydantic 结构化响应校验、受控修复、token 与延迟记录；单实例最多并行执行两个后台任务。
+- Agent Harness 使用类型化工具注册、状态检查点、取消与恢复、持久化事件和 SSE 实时轨迹。
+- SQL 工具仅运行单条只读查询，经过 SQLGlot AST 校验，并在独立 DuckDB 子进程中限制资源和结果规模。
+- Agent Skills 从版本化 `skills/*/SKILL.md` 加载业务约束；MCP 提供可发现的工具、资源、Prompt 和出站只读工具调用。
 
-## 已覆盖的端到端路径
+## RAG 检索与评测
 
-1. 使用开放 UCI Online Retail 数据或导入本地 CSV/XLSX；查看 schema、质量提示和来源摘要。
-2. 上传业务文档并按租户检索；回答需带被校验的文档片段引用。
-3. Agent 根据 schema、指标口径、命中的 Skill 和知识证据生成结构化计划。
-4. SQL 工具只接受数据集 ID 与 SQL；服务端解析器限制表、语句类型、函数、执行时长、内存和结果行数。
-5. 每个阶段保存状态和事件；崩溃后任务可恢复，管理员能查询本租户审计记录和运行统计。
-6. MCP Host 可发现 DataCanvas 的工具、资源和 Prompt，并通过 stdio 或 Streamable HTTP 调用。
+文档链路为 PDF/TXT/Markdown/CSV 解析、按页切分、可选 OCR、Embedding、FTS5 BM25 与 Qdrant 召回、RRF 融合、词项覆盖重排或可选 Cross-Encoder 重排、带来源引用的回答。引用 ID 会根据实际检索证据校验。
 
-## 配置共享访问
+Qdrant 集合按 Embedding 模型与向量维度隔离，检索和删除均按租户过滤。没有配置外部 Embedding / Qdrant 时仍可通过全文检索运行；本地向量检索也可直接使用 SQLite 中的 Embedding。
 
-`DATACANVAS_AUTH_REQUIRED=true` 后，`DATACANVAS_TOKENS` 使用 JSON 字典配置 bearer token 对应的 `tenant_id`、`role`、`sub`。角色为 `admin`、`analyst`、`viewer`。本地单用户默认模式仍可离线运行。共享部署必须在 TLS 与可信网络边界后运行，并使用组织认可的身份系统和密钥托管。
+`POST /api/evaluations/rag` 接受人工标注的相关 Chunk ID，返回 Recall@k、Precision@k 与 MRR。`docs/EVALUATION.md` 区分了规则分析回归、模型调用和检索评测的口径。
 
-## 下一步工程顺序
+## 数据工程、安全与运行观测
 
-1. 先完成可复现的 RAG/Agent 黄金评测和工具权限/超时测试。
-2. 将状态库迁至 PostgreSQL、任务执行迁至 Redis 队列，并加入容器化部署与备份恢复。
-3. 增加 MCP 持久连接池、审批/幂等策略和结构化多 Agent DAG。
-4. 接入 Qdrant 或 pgvector 与专用 reranker，再通过业务黄金集验证召回和引用正确性。
-5. 接入 OIDC、OpenTelemetry、Prometheus 告警以及 Spark/Hadoop 连接器。
+- CSV/XLSX 导入、schema 推断、SHA-256 来源血缘、空值/唯一度/重复行质量剖析。
+- SQL 指标规划、图表结果、CSV/Markdown 报告、模型调用记录及任务轨迹。
+- Bearer 身份、admin/analyst/viewer 角色、租户隔离、管理员审计、任务并发限制与只读数据工具。
+- 健康接口、`/api/metrics`、SSE 事件流、RAG 与 SQL 离线评测，以及 GitHub Actions 自动检查。
+
+## 本地运行和容器演示
+
+Windows 本地环境：
+
+```powershell
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+cd frontend
+npm.cmd ci
+npm.cmd run build
+cd ..
+powershell -ExecutionPolicy Bypass -File .\start.ps1
+```
+
+浏览器打开 <http://127.0.0.1:8201>。容器演示使用 Docker Compose，包含 Web 应用、持久化数据卷和 Qdrant 向量服务。模型、OCR、Embedding、向量库和重排服务通过 `.env` 配置；密钥不进入 Git。

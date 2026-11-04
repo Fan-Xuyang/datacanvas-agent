@@ -20,6 +20,10 @@
 
 配置 Embedding 后，还可设置 `QDRANT_URL`、`QDRANT_API_KEY` 和可选的 `QDRANT_COLLECTION_PREFIX` 启用 Qdrant 向量索引。系统按嵌入模型和维度创建集合，写入仅含 chunk ID、租户 ID 和模型名的 payload；原文仍由本地知识库按租户过滤读取。Qdrant 不可用时检索请求会返回服务错误，避免静默切换到全量扫描。未配置 Qdrant 时使用本地 SQLite 向量余弦检索。
 
+可选语义重排使用兼容 Cohere Rerank 请求格式的服务：设置 `RERANKER_URL`、`RERANKER_MODEL` 和服务要求时使用的 `RERANKER_API_KEY`。重排只接收混合检索召回的候选片段，不取代租户隔离或引用来源校验。没有配置重排服务时使用内置词项覆盖重排。
+
+扫描版 PDF 可通过 `OCR_ENABLED=true` 启用 OCR。运行机器需要安装 Tesseract，并安装 `TESSERACT_LANG` 指定的语言包；默认语言为英文和简体中文。容器镜像内已包含对应 OCR 引擎和语言包。本机 Windows 可安装 Tesseract 后设置 `TESSERACT_CMD` 指向其可执行文件。
+
 ## 共享部署的身份与租户
 
 本地默认单用户。共享实例需启用 `DATACANVAS_AUTH_REQUIRED=true`，并把 `DATACANVAS_TOKENS` 配成 bearer token 到 `tenant_id`、`role`、`sub` 的映射。角色支持 `admin`、`analyst`、`viewer`；viewer 为只读，只有 admin 能查看 `/api/audit`。数据集、任务、知识文档和审计查询按 token 关联的 tenant 隔离。Token 只放入被忽略的 `.env` 或密钥管理服务，不要提交到 Git。

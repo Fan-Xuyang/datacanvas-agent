@@ -18,7 +18,7 @@ DataCanvas 是企业数据分析与知识 Agent 项目：导入业务表和文�
 
 可导入 PDF、TXT、Markdown 和 CSV 文档。系统按页提取、分块、建立全文索引，通过 BM25 检索；配置独立的 embedding 接口后以 RRF 融合词法与向量候选，再按 query-term 覆盖率轻量重排。问答会把检索片段交给生成模型，并只展示模型引用的有效来源 ID。未配置模型时仍可检索原文片段，不会伪称生成回答。数据分析 Agent 也会将相关知识片段作为受信边界明确的业务上下文。
 
-知识库 API：`POST /api/knowledge` 导入；`GET /api/knowledge` 列表；`GET /api/knowledge/search?q=...` 检索；`GET /api/knowledge/answer?q=...` 检索并回答；`DELETE /api/knowledge/{id}` 删除。单文档上限 5 MB，扫描版 PDF 需先 OCR。
+知识库 API：`POST /api/knowledge` 导入；`GET /api/knowledge` 列表；`GET /api/knowledge/search?q=...` 检索；`GET /api/knowledge/answer?q=...` 检索并回答；`DELETE /api/knowledge/{id}` 删除。单文档上限 5 MB；可配置 OCR 处理扫描版 PDF，使用 Qdrant 和兼容 Cohere Rerank 的服务扩展向量检索与重排。
 
 对人工标注的检索用例可调用 `POST /api/evaluations/rag`，输入 query 与相关 Chunk ID，返回 Recall@k、Precision@k 和 MRR；系统不会生成或伪造期望标签。
 
@@ -48,6 +48,10 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 ```
 
 浏览器打开 <http://127.0.0.1:8201>，API 文档为 `/docs`。规则模式不调用模型；知识库可离线做全文检索。项目使用 OpenAI-compatible 接口，已提供 DeepSeek 配置示例，也可替换为兼容服务。配置 `.env` 中的 `AI_API_KEY`、`AI_BASE_URL` 和 `AI_MODEL` 可启用生成式规划及知识问答。Embedding 是独立配置项，需提供支持 embedding 的服务密钥、地址和模型；DeepSeek 对话模型不会被误当成向量模型。
+
+## 容器启动
+
+安装 Docker Desktop 后，复制 `.env.example` 为 `.env` 并填写可选的模型配置，然后在项目根目录执行 `docker compose up --build`。访问 <http://127.0.0.1:8201>；应用、Qdrant 和数据目录分别运行在容器与持久卷中。模型和 Embedding 不配置时仍可用内置数据执行规则分析，知识库使用本地全文检索。
 
 任务请求由结构化规划器生成，再经参数校验的只读 SQL 工具执行。`skills/` 下的 `SKILL.md` 可增加可版本控制的业务规范，运行时按关键词匹配并写入任务轨迹。MCP Server 可单独通过 `python -m app.mcp_server` 以 stdio 启动，或配置 `MCP_TRANSPORT=streamable-http` 使用 HTTP。出站 MCP 服务可通过 `MCP_SERVERS` 配置；`GET /api/mcp/servers/{name}/tools` 发现工具，`POST /api/mcp/servers/{name}/tools/{tool}` 只允许显式声明只读的工具。远程服务必须走 HTTPS，可选 bearer token 放在本地环境变量中；共享部署时，每个服务都要声明允许访问的 `tenant_ids`。
 

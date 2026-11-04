@@ -2,16 +2,19 @@
 
 import hashlib
 import os
+import re
 import uuid
 
 import httpx
 
 
 class QdrantIndex:
-    def __init__(self):
+    def __init__(self, transport=None):
         self.url = os.getenv("QDRANT_URL", "").rstrip("/")
         self.api_key = os.getenv("QDRANT_API_KEY", "")
-        self.prefix = os.getenv("QDRANT_COLLECTION_PREFIX", "datacanvas").strip("_")
+        raw_prefix = os.getenv("QDRANT_COLLECTION_PREFIX", "datacanvas")
+        self.prefix = re.sub(r"[^a-zA-Z0-9_-]", "_", raw_prefix).strip("_") or "datacanvas"
+        self.transport = transport
 
     @property
     def enabled(self):
@@ -26,7 +29,10 @@ class QdrantIndex:
 
     async def _client(self):
         return httpx.AsyncClient(
-            base_url=self.url, headers=self._headers(), timeout=httpx.Timeout(12.0)
+            base_url=self.url,
+            headers=self._headers(),
+            timeout=httpx.Timeout(12.0),
+            transport=self.transport,
         )
 
     async def _ensure_collection(self, client, name, dimensions):
