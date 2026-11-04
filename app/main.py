@@ -142,7 +142,7 @@ async def answer_knowledge(
 
 @app.delete("/api/knowledge/{document_id}")
 async def delete_knowledge(document_id: str, request: Request):
-    if not knowledge.delete_document(document_id, request.state.tenant_id):
+    if not await knowledge.delete_document(document_id, request.state.tenant_id):
         raise HTTPException(404, "知识文档不存在。")
     return {"deleted": True}
 

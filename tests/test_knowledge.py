@@ -37,7 +37,7 @@ def test_knowledge_document_delete_is_tenant_scoped(tmp_path):
         knowledge.add_document("standard.txt", "检验前先核对材料批次。".encode())
     )
 
-    assert not knowledge.delete_document(document["id"], tenant_id="other")
+    assert not asyncio.run(knowledge.delete_document(document["id"], tenant_id="other"))
     assert len(knowledge.documents()) == 1
-    assert knowledge.delete_document(document["id"])
+    assert asyncio.run(knowledge.delete_document(document["id"]))
     assert knowledge.documents() == []

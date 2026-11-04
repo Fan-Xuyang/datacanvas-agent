@@ -230,7 +230,7 @@ class KnowledgeBase:
                 )
             ]
 
-    def delete_document(self, doc_id, tenant_id="local"):
+    async def delete_document(self, doc_id, tenant_id="local"):
         with self.store.connect() as db:
             row = db.execute(
                 "SELECT id FROM knowledge_docs WHERE id=? AND tenant_id=?",
@@ -238,6 +238,20 @@ class KnowledgeBase:
             ).fetchone()
             if not row:
                 return False
+            vectors = [
+                (item[0], item[1], len(json.loads(item[2])))
+                for item in db.execute(
+                    "SELECT id,embedding_model,embedding FROM knowledge_chunks "
+                    "WHERE doc_id=? AND embedding IS NOT NULL AND embedding_model IS NOT NULL",
+                    (doc_id,),
+                )
+            ]
+        grouped = {}
+        for chunk_id, model, dimensions in vectors:
+            grouped.setdefault((model, dimensions), []).append(chunk_id)
+        for (model, dimensions), chunk_ids in grouped.items():
+            await self.vector_index.delete(chunk_ids, model, dimensions)
+        with self.store.connect() as db:
             chunk_ids = [
                 item[0]
                 for item in db.execute(
