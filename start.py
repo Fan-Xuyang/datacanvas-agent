@@ -11,4 +11,4 @@ if __name__ == '__main__':
         os.environ['PORTAL_BASE_URL'] = f'http://127.0.0.1:{port}'
         if port != 8202:
             os.environ['ALLOW_CUSTOM_LOCAL_PORT'] = '1'
-    uvicorn.run('app.main:app', host='127.0.0.1', port=port)
+    uvicorn.run('app.main:app', host=os.getenv('APP_HOST', '127.0.0.1'), port=port)

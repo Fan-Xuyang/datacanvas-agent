@@ -1,0 +1,99 @@
+{
+  "passed": 23,
+  "total": 23,
+  "checks": [
+    {
+      "name": "health",
+      "passed": true
+    },
+    {
+      "name": "frontend",
+      "passed": true
+    },
+    {
+      "name": "open_dataset_rows",
+      "passed": true
+    },
+    {
+      "name": "quality_profile",
+      "passed": true
+    },
+    {
+      "name": "source_lineage",
+      "passed": true
+    },
+    {
+      "name": "demo_task_completed",
+      "passed": true
+    },
+    {
+      "name": "demo_sql_correctness",
+      "passed": true
+    },
+    {
+      "name": "demo_report",
+      "passed": true
+    },
+    {
+      "name": "demo_event_replay",
+      "passed": true
+    },
+    {
+      "name": "live_model_configured",
+      "passed": true
+    },
+    {
+      "name": "live_task_completed",
+      "passed": true
+    },
+    {
+      "name": "live_sql_correctness",
+      "passed": true
+    },
+    {
+      "name": "live_report",
+      "passed": true
+    },
+    {
+      "name": "live_event_replay",
+      "passed": true
+    },
+    {
+      "name": "live_usage_recorded",
+      "passed": true
+    },
+    {
+      "name": "document_retrieval",
+      "passed": true
+    },
+    {
+      "name": "grounded_model_answer",
+      "passed": true
+    },
+    {
+      "name": "document_delete",
+      "passed": true
+    },
+    {
+      "name": "deleted_document_absent",
+      "passed": true
+    },
+    {
+      "name": "qdrant_enabled",
+      "passed": true
+    },
+    {
+      "name": "qdrant_real_search_and_tenant_filter",
+      "passed": true
+    },
+    {
+      "name": "qdrant_real_delete",
+      "passed": true
+    },
+    {
+      "name": "real_scanned_pdf_ocr",
+      "passed": true
+    }
+  ],
+  "live": true
+}

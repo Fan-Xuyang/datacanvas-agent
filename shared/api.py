@@ -331,7 +331,7 @@ def base_app(project_dir, kind, agent_factory, prepare):
             "running",
             state,
             "approved",
-            {"message": "用户已确认当前内容", "digest": request.digest},
+            {"message": "用户已确认当前内容", "digest": approval.digest},
         )
         launch(tid)
         return {"status": "running"}

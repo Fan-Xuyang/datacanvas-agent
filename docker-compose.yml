@@ -2,9 +2,12 @@ services:
   app:
     build: .
     ports:
-      - "127.0.0.1:8201:8201"
+      - "127.0.0.1:${DATACANVAS_PORT:-8203}:8201"
     environment:
       APP_DATA_DIR: /app/data
+      APP_HOST: 0.0.0.0
+      DATACANVAS_AUTH_REQUIRED: ${DATACANVAS_AUTH_REQUIRED:-false}
+      DATACANVAS_TOKENS: ${DATACANVAS_TOKENS:-}
       OCR_ENABLED: "true"
       AI_API_KEY: ${AI_API_KEY:-}
       AI_BASE_URL: ${AI_BASE_URL:-https://api.deepseek.com/v1}
@@ -27,6 +30,8 @@ services:
 
   qdrant:
     image: qdrant/qdrant:v1.20.0
+    environment:
+      QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY:-}
     expose:
       - "6333"
     volumes:

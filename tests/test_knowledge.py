@@ -4,6 +4,23 @@ from app.knowledge import KnowledgeBase
 from shared.store import Store
 
 
+def test_generated_answer_requires_valid_source(tmp_path, monkeypatch):
+    from app.knowledge import GroundedAnswer
+
+    monkeypatch.delenv("AI_EMBEDDING_MODEL", raising=False)
+    knowledge = KnowledgeBase(Store(tmp_path / "state.sqlite3"))
+    asyncio.run(knowledge.add_document("source.txt", "材料批次需要核验检验报告。".encode()))
+
+    async def invalid_answer(*args):
+        return GroundedAnswer(answer="unsupported claim", citations=["fake-id"]), {}
+
+    monkeypatch.setattr("app.knowledge.configured", lambda: True)
+    monkeypatch.setattr("app.knowledge.structured", invalid_answer)
+    answer = asyncio.run(knowledge.answer("材料批次检验报告"))
+    assert "unsupported claim" not in answer["answer"]
+    assert answer["citations"] == []
+
+
 def test_markdown_ingestion_hybrid_search_and_deduplication(tmp_path, monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     store = Store(tmp_path / "state.sqlite3")

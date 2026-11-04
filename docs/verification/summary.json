@@ -1,0 +1,26 @@
+{
+  "report_date_user_timezone": "2026-11-04",
+  "timezone": "Asia/Shanghai",
+  "environment": {
+    "host": "Windows 11",
+    "python_native": "3.12.4",
+    "node": "24.13.0",
+    "docker_engine": "27.4.0",
+    "qdrant_image": "qdrant/qdrant:v1.20.0",
+    "native_url": "http://127.0.0.1:8201",
+    "container_url": "http://127.0.0.1:8203"
+  },
+  "backend": {"passed": 40, "total": 40, "seconds": 13.36},
+  "ruff_F_rules": "passed",
+  "frontend_build": "passed in Docker multi-stage build",
+  "container_image_build": "passed",
+  "container_health": {"app": "healthy", "qdrant": "healthy"},
+  "sql_rule_regression": {"passed": 100, "total": 100, "negative_rejected": 6, "negative_total": 6},
+  "engineering_flows": {"passed": 10, "total": 10, "checks_passed": 40, "checks_total": 40, "p50_ms": 961.41, "p95_ms": 1095.97},
+  "container_acceptance": {"passed": 23, "total": 23, "live_model": true},
+  "browser": {"passed": true, "javascript_errors": 0, "desktop_width": 1440, "mobile_width": 390},
+  "restart_persistence": {"passed": true, "tasks_before": 7, "tasks_after": 7},
+  "embedding_scope": "Actual Qdrant tested with controlled numeric vectors, not a configured semantic embedding provider",
+  "reranker_scope": "MockTransport contract tests, not a live external reranker service",
+  "ocr_scope": "Actual Tesseract on image-only English acceptance PDF; not an OCR accuracy benchmark"
+}

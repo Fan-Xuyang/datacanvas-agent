@@ -51,7 +51,9 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 
 ## 容器启动
 
-安装 Docker Desktop 后，复制 `.env.example` 为 `.env` 并填写可选的模型配置，然后在项目根目录执行 `docker compose up --build`。访问 <http://127.0.0.1:8201>；应用、Qdrant 和数据目录分别运行在容器与持久卷中。模型和 Embedding 不配置时仍可用内置数据执行规则分析，知识库使用本地全文检索。
+安装 Docker Desktop 后，复制 `.env.example` 为 `.env` 并填写可选的模型配置，然后在项目根目录执行 `docker compose up --build -d --wait`。访问 <http://127.0.0.1:8203>；应用、Qdrant 和数据目录分别运行在容器与持久卷中。可通过 `DATACANVAS_PORT` 修改宿主机端口。模型和 Embedding 不配置时仍可用内置数据执行规则分析，知识库使用本地全文检索。
+
+完整架构、运行方式、实测结果和验收证据见[项目交付报告](docs/PROJECT_REPORT.md)。
 
 任务请求由结构化规划器生成，再经参数校验的只读 SQL 工具执行。`skills/` 下的 `SKILL.md` 可增加可版本控制的业务规范，运行时按关键词匹配并写入任务轨迹。MCP Server 可单独通过 `python -m app.mcp_server` 以 stdio 启动，或配置 `MCP_TRANSPORT=streamable-http` 使用 HTTP。出站 MCP 服务可通过 `MCP_SERVERS` 配置；`GET /api/mcp/servers/{name}/tools` 发现工具，`POST /api/mcp/servers/{name}/tools/{tool}` 只允许显式声明只读的工具。远程服务必须走 HTTPS，可选 bearer token 放在本地环境变量中；共享部署时，每个服务都要声明允许访问的 `tenant_ids`。
 

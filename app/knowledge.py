@@ -476,6 +476,12 @@ class KnowledgeBase:
         )
         allowed = {hit["id"] for hit in hits}
         cited = set(answer.citations) & allowed
+        if not cited:
+            return {
+                "answer": "本次回答未提供可核验的原文引用，请调整问题后重试或查阅匹配资料。",
+                "citations": [],
+                "usage": usage,
+            }
         return {
             "answer": answer.answer,
             "citations": [hit for hit in hits if hit["id"] in cited],

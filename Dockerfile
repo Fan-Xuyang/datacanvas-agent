@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends tesseract-ocr t
 COPY app ./app
 COPY shared ./shared
 COPY skills ./skills
+COPY docs ./docs
 COPY examples ./examples
 COPY start.py ./start.py
 COPY --from=frontend /build/frontend/dist ./frontend/dist
